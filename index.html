@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Metas 2027</title>
+<meta name="theme-color" content="#2f5bd3">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Metas 2027">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* layout: resumo do ano no topo, trilho de áreas que filtra, grade de cartões de meta; edição numa gaveta lateral */
+  --bg:#eef1f6; --surface:#ffffff; --ink:#18202f; --muted:#5b6478; --line:#dde2ea; --accent:#2f5bd3; --accent-soft:#e6ecfb;
+  --good:#1d8350; --warn:#b26f12; --bad:#c23b34; --idle:#8a93a5;
+  --a-fin:#1d8350; --a-car:#2f5bd3; --a-sau:#0b8484; --a-pro:#7448cc; --a-pes:#c23f7c;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10141c; --surface:#181e2a; --ink:#e7ebf3; --muted:#9aa3b6; --line:#2a3242; --accent:#7d9cf5; --accent-soft:#1f2a45;
+    --good:#4cc283; --warn:#e3a54a; --bad:#ef7a72; --idle:#6f788b;
+    --a-fin:#4cc283; --a-car:#7d9cf5; --a-sau:#3fc4c4; --a-pro:#a98bf0; --a-pes:#ec7fb1;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10141c; --surface:#181e2a; --ink:#e7ebf3; --muted:#9aa3b6; --line:#2a3242; --accent:#7d9cf5; --accent-soft:#1f2a45;
+  --good:#4cc283; --warn:#e3a54a; --bad:#ef7a72; --idle:#6f788b;
+  --a-fin:#4cc283; --a-car:#7d9cf5; --a-sau:#3fc4c4; --a-pro:#a98bf0; --a-pes:#ec7fb1;
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 20px 64px;display:flex;flex-direction:column;gap:22px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
+h1{font-size:34px;font-weight:700;letter-spacing:-.01em}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.top p{margin:4px 0 0;color:var(--muted)}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 14px;font-weight:500}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+:root[data-theme="dark"] .btn.primary{color:#10141c}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn.primary{color:#10141c}}
+.btn.small{padding:5px 10px;font-size:13px;border-radius:8px}
+.btn.danger{color:var(--bad)}
+.btn.danger.armed{background:var(--bad);border-color:var(--bad);color:#fff}
+
+/* resumo */
+.summary{display:grid;grid-template-columns:auto 1fr;gap:20px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;align-items:center}
+.ring{position:relative;width:132px;height:132px}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .pct{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring .pct b{font-family:var(--display);font-size:30px;font-variant-numeric:tabular-nums}
+.ring .pct span{font-size:11px;color:var(--muted)}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.tile{border-left:3px solid var(--line);padding:4px 0 4px 12px}
+.tile b{display:block;font-family:var(--display);font-size:26px;font-variant-numeric:tabular-nums}
+.tile span{color:var(--muted);font-size:13px}
+.tile.t-done{border-color:var(--good)} .tile.t-run{border-color:var(--accent)} .tile.t-days{border-color:var(--warn)}
+
+/* áreas */
+.areas{display:flex;gap:10px;flex-wrap:wrap}
+.area{flex:1 1 170px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.area.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset}
+.area .row{display:flex;justify-content:space-between;gap:8px;font-size:13px;flex-wrap:wrap}
+.area .row span{white-space:nowrap}
+.area .row b{font-weight:600}
+.area .row span{color:var(--muted);font-variant-numeric:tabular-nums}
+.bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ac,var(--accent));border-radius:6px;transition:width .3s}
+
+/* barra de ferramentas */
+.tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.tools label{font-size:13px;color:var(--muted);display:flex;gap:6px;align-items:center}
+.tools select{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:5px 8px}
+.tools .spacer{flex:1}
+
+/* cartões */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;display:flex;flex-direction:column;gap:10px;border-top:4px solid var(--ac)}
+.card.done{opacity:.78}
+.card .head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.card h3{font-size:18px;font-weight:700;line-height:1.25}
+.card .area-name{font-size:12px;color:var(--ac);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{font-size:12px;padding:2px 9px;border-radius:999px;border:1px solid currentColor;font-weight:500;white-space:nowrap}
+.s-idle{color:var(--idle)} .s-run{color:var(--accent)} .s-done{color:var(--good)} .s-pause{color:var(--warn)}
+.p-alta{color:var(--bad)} .p-media{color:var(--warn)} .p-baixa{color:var(--idle)}
+.prog{display:flex;align-items:center;gap:10px}
+.prog .bar{flex:1;height:9px}
+.prog b{font-variant-numeric:tabular-nums;min-width:42px;text-align:right}
+.meta-line{font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.meta-line .late{color:var(--bad);font-weight:600}
+.big{font-family:var(--display);font-size:20px;font-variant-numeric:tabular-nums}
+.big small{font-family:var(--body);font-size:13px;color:var(--muted);font-weight:400}
+.quick{display:flex;gap:8px}
+.quick input{flex:1;min-width:0;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:6px 10px}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.steps label{display:flex;gap:8px;align-items:flex-start;padding:4px 2px;border-radius:6px;font-size:14px;cursor:pointer}
+.steps label:hover{background:var(--bg)}
+.steps input{margin-top:3px;accent-color:var(--ac)}
+.steps .ok{color:var(--muted);text-decoration:line-through}
+.card .foot{display:flex;gap:8px;justify-content:flex-end;margin-top:auto}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:14px;padding:28px;text-align:center;color:var(--muted)}
+
+/* gaveta */
+.scrim{position:fixed;inset:0;background:rgba(10,14,22,.45);display:none;z-index:10}
+.scrim.open{display:block}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(460px,100%);background:var(--surface);border-left:1px solid var(--line);z-index:11;transform:translateX(100%);transition:transform .25s;display:flex;flex-direction:column}
+.drawer.open{transform:none}
+.drawer header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line)}
+.drawer header h2{font-size:20px}
+.drawer .body{overflow:auto;padding:16px 20px 32px;display:flex;flex-direction:column;gap:14px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field>span{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.field input,.field select,.field textarea{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:8px 10px;width:100%}
+.field textarea{min-height:70px;resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.sec{border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:8px}
+.sec h3{font-size:15px}
+.ed-step{display:flex;gap:6px;align-items:center}
+.ed-step input[type=text]{flex:1;min-width:0;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:6px 8px}
+.icon{border:1px solid var(--line);background:var(--surface);border-radius:8px;width:30px;height:30px;line-height:1;font-size:15px;color:var(--muted)}
+.icon:hover{color:var(--bad);border-color:var(--bad)}
+.hist{list-style:none;margin:0;padding:0;font-size:14px;display:flex;flex-direction:column;gap:4px}
+.hist li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--line)}
+.hist .v{font-variant-numeric:tabular-nums;font-weight:600}
+.hint{font-size:13px;color:var(--muted);margin:0}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;z-index:20;display:none;max-width:90%}
+.notice{background:var(--accent-soft);border-radius:10px;padding:10px 14px;font-size:14px}
+.login{max-width:380px;margin:12vh auto 0;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:14px}
+.login h1{font-size:28px}
+.login p{margin:0;color:var(--muted);font-size:14px}
+.login .err{color:var(--bad)}
+.topbtns{display:flex;gap:8px;flex-wrap:wrap}
+.foot-tools{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;color:var(--muted);font-size:13px;align-items:center}
+@media (max-width:640px){
+  .summary{grid-template-columns:1fr;justify-items:center}
+  .tiles{grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
+  h1{font-size:28px}
+  .three{grid-template-columns:1fr 1fr}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+</head>
+<body>
+<section class="login" id="login" hidden>
+  <h1>Metas 2027</h1>
+  <p>Entre com o e-mail e a senha que você criou no Supabase.</p>
+  <form id="loginForm" class="body" style="display:flex;flex-direction:column;gap:12px">
+    <label class="field" for="lEmail"><span>E-mail</span><input id="lEmail" type="email" autocomplete="username" required></label>
+    <label class="field" for="lSenha"><span>Senha</span><input id="lSenha" type="password" autocomplete="current-password" required></label>
+    <button class="btn primary" type="submit" id="lBtn">Entrar</button>
+    <p class="err" id="lErr"></p>
+  </form>
+</section>
+<div class="wrap" id="app" hidden>
+  <div class="top">
+    <div>
+      <h1>Metas 2027</h1>
+      <p id="sub">Carregando suas metas…</p>
+    </div>
+    <div class="topbtns"><button class="btn primary" id="btnNova" type="button">+ Nova meta</button></div>
+  </div>
+  <div id="notice" class="notice" hidden></div>
+
+  <section class="summary" aria-label="Resumo">
+    <div class="ring">
+      <svg viewBox="0 0 120 120" aria-hidden="true">
+        <circle cx="60" cy="60" r="52" fill="none" stroke="var(--line)" stroke-width="12"/>
+        <circle id="ringArc" cx="60" cy="60" r="52" fill="none" stroke="var(--accent)" stroke-width="12" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+      </svg>
+      <div class="pct"><b id="pctGeral">0%</b><span>progresso geral</span></div>
+    </div>
+    <div class="tiles">
+      <div class="tile"><b id="tTotal">0</b><span>metas</span></div>
+      <div class="tile t-done"><b id="tDone">0</b><span>concluídas</span></div>
+      <div class="tile t-run"><b id="tRun">0</b><span>em andamento</span></div>
+      <div class="tile t-days"><b id="tDays">0</b><span>dias até 31/12/2027</span></div>
+    </div>
+  </section>
+
+  <section class="areas" id="areas" aria-label="Filtrar por área"></section>
+
+  <div class="tools">
+    <label for="ordem">Ordenar por
+      <select id="ordem">
+        <option value="prioridade">Prioridade</option>
+        <option value="prazo">Prazo</option>
+        <option value="progresso">Progresso</option>
+        <option value="nome">Nome</option>
+      </select>
+    </label>
+    <label for="ocultar"><input type="checkbox" id="ocultar"> Ocultar concluídas</label>
+    <span class="spacer"></span>
+    <span class="hint" id="filtroInfo"></span>
+  </div>
+
+  <section class="grid" id="grid" aria-live="polite"></section>
+  <div class="foot-tools">
+    <button class="btn small" type="button" id="btnExport">Baixar backup</button>
+    <label class="btn small" for="fImport">Restaurar backup</label><input type="file" id="fImport" accept="application/json" hidden>
+    <button class="btn small" type="button" id="btnSair">Sair</button>
+    <span id="quem"></span>
+  </div>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Editar meta">
+  <header><h2 id="dTitle">Editar meta</h2><button class="btn small" type="button" data-act="fechar">Fechar</button></header>
+  <div class="body" id="dBody"></div>
+</aside>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const AREAS=[
+  {k:"Finanças",c:"var(--a-fin)"},
+  {k:"Carreira e estudos",c:"var(--a-car)"},
+  {k:"Saúde e hábitos",c:"var(--a-sau)"},
+  {k:"Projetos pessoais",c:"var(--a-pro)"},
+  {k:"Pessoal e família",c:"var(--a-pes)"}
+];
+const STATUS=["Não iniciada","Em andamento","Concluída","Pausada"];
+const STATUS_CLS={"Não iniciada":"s-idle","Em andamento":"s-run","Concluída":"s-done","Pausada":"s-pause"};
+const PRIOS=["Alta","Média","Baixa"];
+const PRIO_CLS={"Alta":"p-alta","Média":"p-media","Baixa":"p-baixa"};
+const TIPOS=["Numérica","Etapas","Marco único"];
+
+let db=null, metas=[], loaded=false, filtroArea=null, editId=null;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const areaColor=a=>(AREAS.find(x=>x.k===a)||{c:"var(--accent)"}).c;
+const uid=()=>Math.random().toString(36).slice(2,10);
+const hoje=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const pctTxt=p=>{const v=p*100;return (v>0&&v<10?v.toLocaleString("pt-BR",{maximumFractionDigits:1}):Math.round(v))+"%"};
+const num=n=>Number(n||0).toLocaleString("pt-BR",{maximumFractionDigits:2});
+const comUnidade=(n,u)=>u==="R$"?"R$ "+num(n):num(n)+(u?" "+u:"");
+const dataBR=s=>{if(!s)return"";const [y,m,d]=s.split("-");return d+"/"+m+"/"+y};
+function diasAte(s){if(!s)return null;const [y,m,d]=s.split("-").map(Number);const alvo=new Date(y,m-1,d);const h=new Date();h.setHours(0,0,0,0);return Math.round((alvo-h)/86400000)}
+
+function progresso(m){
+  if(m.tipo==="Numérica"){const a=Number(m.atual)||0,t=Number(m.alvo)||0;return t>0?Math.max(0,Math.min(1,a/t)):0}
+  if(m.status==="Concluída"&&m.tipo==="Marco único")return 1;
+  const et=m.etapas||[];
+  if(!et.length)return m.status==="Concluída"?1:0;
+  return et.filter(e=>e.feita).length/et.length;
+}
+// Ajusta o status sozinho quando o progresso muda por uma ação sua
+function comStatus(m,patch){
+  const n={...m,...patch};const p=progresso(n);
+  if(n.status==="Pausada")return patch;
+  if(p>=1&&n.status!=="Concluída")patch.status="Concluída";
+  else if(p>0&&p<1&&n.status!=="Em andamento")patch.status="Em andamento";
+  else if(p===0&&n.status==="Em andamento"&&!(n.registros||[]).length)patch.status="Não iniciada";
+  return patch;
+}
+
+/* ---------- gravação (Supabase) ---------- */
+const CAMPOS=["nome","area","tipo","prioridade","status","prazo","atual","alvo","unidade","notas","ordem","etapas","registros"];
+const limpar=o=>{const r={};for(const k of CAMPOS)if(k in o)r[k]=(k==="prazo"&&!o[k])?null:o[k];return r};
+const filas={};
+function salvar(id,patch){
+  const m=metas.find(x=>x.id===id);if(!m)return;
+  Object.assign(m,patch);render();if(editId===id)$("dTitle").textContent=m.nome||"Editar meta";
+  filas[id]=(filas[id]||Promise.resolve()).then(async()=>{const{error}=await sb.from("metas").update(limpar(patch)).eq("id",id);if(error)throw error})
+    .catch(e=>toast("Não consegui salvar: "+(e.message||"erro")+". Recarregue a página."));
+}
+function novaMetaBase(o){return{nome:"Nova meta",area:filtroArea||"Pessoal e família",tipo:"Etapas",prioridade:"Média",status:"Não iniciada",prazo:"2027-12-31",atual:0,alvo:0,unidade:"",notas:"",ordem:metas.reduce((a,m)=>Math.max(a,m.ordem||0),0)+1,etapas:[],registros:[],...o}}
+async function criarMeta(){
+  const {data,error}=await sb.from("metas").insert(limpar(novaMetaBase({}))).select().single();
+  if(error){toast("Não consegui criar a meta: "+error.message);return}
+  metas.push(norm(data));render();abrir(data.id);
+}
+async function excluirMeta(id){
+  const {error}=await sb.from("metas").delete().eq("id",id);
+  if(error){toast("Não consegui excluir: "+error.message);return}
+  metas=metas.filter(m=>m.id!==id);fechar();render();toast("Meta excluída.");
+}
+/* ---------- ações nos cartões ---------- */
+function adicionarValor(id){
+  const m=metas.find(x=>x.id===id);const inp=$("q-"+id);
+  const v=parseFloat(String(inp.value).replace(",","."));
+  if(!v){inp.focus();return}
+  const registros=[...(m.registros||[]).map(r=>({...r})),{id:uid(),valor:v,data:hoje()}].slice(-500);
+  const atual=Math.round(((Number(m.atual)||0)+v)*100)/100;
+  salvar(id,comStatus(m,{atual,registros}));
+  toast((v>0?"+":"")+comUnidade(v,m.unidade)+" em "+m.nome);
+}
+function marcarEtapa(id,eid,feita){
+  const m=metas.find(x=>x.id===id);
+  const etapas=(m.etapas||[]).map(e=>e.id===eid?{...e,feita}:{...e});
+  salvar(id,comStatus(m,{etapas}));
+}
+function marcoConcluir(id){
+  const m=metas.find(x=>x.id===id);
+  salvar(id,{status:m.status==="Concluída"?"Em andamento":"Concluída"});
+}
+
+/* ---------- desenho ---------- */
+function ordenadas(){
+  let l=metas.slice();
+  if(filtroArea)l=l.filter(m=>m.area===filtroArea);
+  if($("ocultar").checked)l=l.filter(m=>m.status!=="Concluída");
+  const o=$("ordem").value;
+  const pr=m=>PRIOS.indexOf(m.prioridade)<0?9:PRIOS.indexOf(m.prioridade);
+  l.sort((a,b)=>{
+    if(o==="prazo")return (a.prazo||"9999").localeCompare(b.prazo||"9999");
+    if(o==="progresso")return progresso(b)-progresso(a);
+    if(o==="nome")return (a.nome||"").localeCompare(b.nome||"","pt-BR");
+    return pr(a)-pr(b)||(a.ordem||0)-(b.ordem||0);
+  });
+  return l;
+}
+function render(){
+  // resumo
+  const tot=metas.length;
+  const geral=tot?metas.reduce((s,m)=>s+progresso(m),0)/tot:0;
+  $("pctGeral").textContent=pctTxt(geral);
+  $("ringArc").setAttribute("stroke-dashoffset",(326.7*(1-geral)).toFixed(1));
+  $("tTotal").textContent=tot;
+  $("tDone").textContent=metas.filter(m=>m.status==="Concluída").length;
+  $("tRun").textContent=metas.filter(m=>m.status==="Em andamento").length;
+  $("tDays").textContent=Math.max(0,diasAte("2027-12-31"));
+  if(loaded)$("sub").textContent=tot?"Toque numa etapa ou adicione um valor: o progresso se atualiza na hora.":"Comece criando sua primeira meta.";
+
+  // áreas
+  $("areas").innerHTML=[{k:null,c:"var(--accent)"}].concat(AREAS).map(a=>{
+    const l=a.k?metas.filter(m=>m.area===a.k):metas;
+    const p=l.length?l.reduce((s,m)=>s+progresso(m),0)/l.length:0;
+    return `<button type="button" class="area ${filtroArea===a.k?"on":""}" style="--ac:${a.c}" data-act="area" data-area="${esc(a.k||"")}">
+      <div class="row"><b>${a.k?esc(a.k):"Todas as áreas"}</b><span>${l.length} · ${pctTxt(p)}</span></div>
+      <div class="bar"><i style="width:${(p*100).toFixed(1)}%"></i></div></button>`;
+  }).join("");
+  $("filtroInfo").textContent=filtroArea?"Mostrando: "+filtroArea:"";
+
+  // cartões
+  const l=ordenadas();
+  if(!loaded){$("grid").innerHTML=`<div class="empty">Carregando…</div>`;return}
+  if(!l.length){$("grid").innerHTML=`<div class="empty">${metas.length?"Nenhuma meta neste filtro.":"Nenhuma meta ainda. Use “+ Nova meta” para começar."}</div>`;return}
+  $("grid").innerHTML=l.map(cartao).join("");
+}
+function cartao(m){
+  const p=progresso(m), c=areaColor(m.area), d=diasAte(m.prazo);
+  const st=m.status||"Não iniciada";
+  let prazo="";
+  if(m.prazo){prazo=st==="Concluída"?"Prazo "+dataBR(m.prazo):d<0?`<span class="late">Atrasada ${-d} dia${-d===1?"":"s"}</span>`:`Prazo ${dataBR(m.prazo)} · faltam ${d} dias`}
+  let corpo="";
+  if(m.tipo==="Numérica"){
+    const regs=m.registros||[];const ult=regs[regs.length-1];
+    const falta=Math.max(0,(Number(m.alvo)||0)-(Number(m.atual)||0));
+    corpo=`<div class="big">${esc(comUnidade(m.atual,m.unidade))} <small>de ${esc(comUnidade(m.alvo,m.unidade))}</small></div>
+      <form class="quick" data-form="add" data-id="${m.id}">
+        <input id="q-${m.id}" type="text" inputmode="decimal" placeholder="Quanto você avançou? ex.: 100" aria-label="Valor para adicionar em ${esc(m.nome)}">
+        <button class="btn small primary" type="submit">Adicionar</button>
+      </form>
+      <div class="meta-line"><span>${ult?"Último: "+(ult.valor>0?"+":"")+esc(comUnidade(ult.valor,m.unidade))+" em "+dataBR(ult.data):"Nenhum avanço registrado ainda"}</span><span>${falta>0?"Faltam "+esc(comUnidade(falta,m.unidade)):"Alvo atingido"}</span></div>`;
+  }else{
+    const et=m.etapas||[];
+    corpo=et.length?`<ul class="steps">${et.map(e=>`<li><label><input type="checkbox" data-act="etapa" data-id="${m.id}" data-eid="${e.id}" ${e.feita?"checked":""}><span class="${e.feita?"ok":""}">${esc(e.texto)}</span></label></li>`).join("")}</ul>
+      <div class="meta-line"><span>${et.filter(e=>e.feita).length} de ${et.length} etapas</span></div>`
+      :`<p class="hint">${m.tipo==="Marco único"?"Sem etapas: marque como concluída quando acontecer.":"Nenhuma etapa ainda. Use Editar para adicionar."}</p>`;
+    if(m.tipo==="Marco único")corpo+=`<button class="btn small" type="button" data-act="marco" data-id="${m.id}">${st==="Concluída"?"Reabrir meta":"Marcar como concluída"}</button>`;
+  }
+  return `<article class="card ${st==="Concluída"?"done":""}" style="--ac:${c}">
+    <div class="head"><div><div class="area-name">${esc(m.area)}</div><h3>${esc(m.nome)}</h3></div></div>
+    <div class="pills"><span class="pill ${STATUS_CLS[st]||"s-idle"}">${esc(st)}</span><span class="pill ${PRIO_CLS[m.prioridade]||"p-baixa"}">Prioridade ${esc((m.prioridade||"").toLowerCase())}</span></div>
+    <div class="prog"><div class="bar"><i style="width:${(p*100).toFixed(1)}%"></i></div><b>${pctTxt(p)}</b></div>
+    ${corpo}
+    <div class="meta-line"><span>${prazo}</span></div>
+    <div class="foot"><button class="btn small" type="button" data-act="editar" data-id="${m.id}">Editar</button></div>
+  </article>`;
+}
+
+/* ---------- gaveta de edição ---------- */
+function abrir(id){editId=id;desenharGaveta();$("drawer").classList.add("open");$("scrim").classList.add("open");setTimeout(()=>{const f=$("f-nome");if(f)f.focus()},50)}
+function fechar(){editId=null;$("drawer").classList.remove("open");$("scrim").classList.remove("open")}
+const opts=(lista,v)=>lista.map(x=>`<option ${x===v?"selected":""}>${esc(x)}</option>`).join("");
+function desenharGaveta(){
+  const m=metas.find(x=>x.id===editId);if(!m){fechar();return}
+  $("dTitle").textContent=m.nome||"Editar meta";
+  const num=m.tipo==="Numérica";
+  $("dBody").innerHTML=`
+    <label class="field" for="f-nome"><span>Meta</span><input id="f-nome" type="text" value="${esc(m.nome)}" data-f="nome"></label>
+    <div class="two">
+      <label class="field" for="f-area"><span>Área</span><select id="f-area" data-f="area">${opts(AREAS.map(a=>a.k),m.area)}</select></label>
+      <label class="field" for="f-tipo"><span>Tipo</span><select id="f-tipo" data-f="tipo">${opts(TIPOS,m.tipo)}</select></label>
+      <label class="field" for="f-status"><span>Status</span><select id="f-status" data-f="status">${opts(STATUS,m.status)}</select></label>
+      <label class="field" for="f-prio"><span>Prioridade</span><select id="f-prio" data-f="prioridade">${opts(PRIOS,m.prioridade)}</select></label>
+    </div>
+    <label class="field" for="f-prazo"><span>Prazo</span><input id="f-prazo" type="date" value="${esc(m.prazo||"")}" data-f="prazo"></label>
+    ${num?`<div class="three">
+      <label class="field" for="f-atual"><span>Valor atual</span><input id="f-atual" type="text" inputmode="decimal" value="${esc(m.atual??0)}" data-f="atual" data-num="1"></label>
+      <label class="field" for="f-alvo"><span>Alvo</span><input id="f-alvo" type="text" inputmode="decimal" value="${esc(m.alvo??0)}" data-f="alvo" data-num="1"></label>
+      <label class="field" for="f-un"><span>Unidade</span><input id="f-un" type="text" placeholder="R$, horas…" value="${esc(m.unidade||"")}" data-f="unidade"></label>
+    </div><p class="hint">Para somar um depósito ou avanço, use o campo “Adicionar” no cartão: ele guarda o histórico abaixo.</p>`:""}
+    <label class="field" for="f-notas"><span>Notas</span><textarea id="f-notas" data-f="notas">${esc(m.notas||"")}</textarea></label>
+    ${num?"":`<div class="sec"><h3>Etapas</h3>
+      ${(m.etapas||[]).map((e,i)=>`<div class="ed-step">
+        <input type="checkbox" id="fe-c-${e.id}" data-act="etapa" data-id="${m.id}" data-eid="${e.id}" ${e.feita?"checked":""} aria-label="Feita">
+        <input type="text" id="fe-t-${e.id}" value="${esc(e.texto)}" data-etxt="${e.id}" aria-label="Etapa ${i+1}">
+        <button class="icon" type="button" title="Subir" data-act="subir" data-eid="${e.id}" ${i===0?"disabled":""}>↑</button>
+        <button class="icon" type="button" title="Remover etapa" data-act="rmEtapa" data-eid="${e.id}">×</button></div>`).join("")||`<p class="hint">Nenhuma etapa.</p>`}
+      <form class="quick" data-form="novaEtapa"><input id="f-novaEtapa" type="text" placeholder="Nova etapa" aria-label="Nova etapa"><button class="btn small" type="submit">Adicionar etapa</button></form>
+    </div>`}
+    ${num?`<div class="sec"><h3>Histórico de avanços</h3>
+      ${(m.registros||[]).length?`<ul class="hist">${(m.registros||[]).slice().reverse().map(r=>`<li><span>${dataBR(r.data)}</span><span class="v">${r.valor>0?"+":""}${esc(comUnidade(r.valor,m.unidade))}</span><button class="icon" type="button" title="Apagar este registro" data-act="rmReg" data-rid="${r.id}">×</button></li>`).join("")}</ul>`:`<p class="hint">Nada registrado ainda.</p>`}
+    </div>`:""}
+    <div class="sec"><button class="btn danger" type="button" data-act="excluir" id="btnExcluir">Excluir meta</button></div>`;
+}
+function patchGaveta(patch,redesenhar){const m=metas.find(x=>x.id===editId);if(!m)return;salvar(editId,comStatus(m,patch));if(redesenhar)desenharGaveta()}
+
+/* ---------- eventos ---------- */
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-act]");if(!t)return;
+  const a=t.dataset.act;
+  if(a==="area"){filtroArea=t.dataset.area||null;render()}
+  else if(a==="editar")abrir(t.dataset.id);
+  else if(a==="fechar")fechar();
+  else if(a==="marco")marcoConcluir(t.dataset.id);
+  else if(a==="rmEtapa"){const m=metas.find(x=>x.id===editId);patchGaveta({etapas:(m.etapas||[]).filter(x=>x.id!==t.dataset.eid).map(x=>({...x}))},true)}
+  else if(a==="subir"){const m=metas.find(x=>x.id===editId);const l=(m.etapas||[]).map(x=>({...x}));const i=l.findIndex(x=>x.id===t.dataset.eid);if(i>0){[l[i-1],l[i]]=[l[i],l[i-1]];patchGaveta({etapas:l},true)}}
+  else if(a==="rmReg"){const m=metas.find(x=>x.id===editId);const r=(m.registros||[]).find(x=>x.id===t.dataset.rid);if(!r)return;
+    patchGaveta({registros:m.registros.filter(x=>x.id!==r.id).map(x=>({...x})),atual:Math.round(((Number(m.atual)||0)-r.valor)*100)/100},true)}
+  else if(a==="excluir"){if(t.classList.contains("armed"))excluirMeta(editId);else{t.classList.add("armed");t.textContent="Toque de novo para excluir de vez";setTimeout(()=>{if(t.isConnected){t.classList.remove("armed");t.textContent="Excluir meta"}},4000)}}
+});
+document.addEventListener("change",e=>{
+  const t=e.target;
+  if(t.dataset.act==="etapa"){marcarEtapa(t.dataset.id,t.dataset.eid,t.checked);if(editId)desenharGaveta();return}
+  if(t.dataset.f&&editId){
+    let v=t.value;
+    if(t.dataset.num){v=parseFloat(String(v).replace(",","."));if(isNaN(v))v=0}
+    if(t.dataset.f==="nome"&&!v.trim())v="Sem nome";
+    patchGaveta({[t.dataset.f]:v},t.dataset.f==="tipo");
+    return;
+  }
+  if(t.dataset.etxt&&editId){const m=metas.find(x=>x.id===editId);patchGaveta({etapas:(m.etapas||[]).map(x=>x.id===t.dataset.etxt?{...x,texto:t.value}:{...x})},false)}
+  if(t.id==="ordem"||t.id==="ocultar")render();
+});
+document.addEventListener("submit",e=>{
+  const f=e.target;if(!f.dataset.form)return;e.preventDefault();
+  if(f.dataset.form==="add")adicionarValor(f.dataset.id);
+  if(f.dataset.form==="novaEtapa"){const inp=$("f-novaEtapa");const txt=inp.value.trim();if(!txt)return;const m=metas.find(x=>x.id===editId);
+    patchGaveta({etapas:[...(m.etapas||[]).map(x=>({...x})),{id:uid(),texto:txt,feita:false}]},true);setTimeout(()=>{const n=$("f-novaEtapa");if(n)n.focus()},30)}
+});
+$("btnNova").addEventListener("click",criarMeta);
+$("scrim").addEventListener("click",fechar);
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&editId)fechar()});
+
+let toastT;function toast(msg){const el=$("toast");el.textContent=msg;el.style.display="block";clearTimeout(toastT);toastT=setTimeout(()=>el.style.display="none",2600)}
+function aviso(msg){const n=$("notice");n.textContent=msg;n.hidden=!msg}
+
+/* ---------- conexão, login e backup ---------- */
+const SEED=[
+ {nome:"Casar",area:"Pessoal e família",tipo:"Marco único",prioridade:"Alta",prazo:"2027-12-31",notas:"Chega a 100% quando todas as etapas estiverem feitas ou quando você marcar como concluída.",etapas:["Definir a data","Definir o orçamento","Escolher o local","Fazer a lista de convidados","Enviar os convites","Separar a documentação do casamento civil","O grande dia"]},
+ {nome:"Juntar R$ 50.000",area:"Finanças",tipo:"Numérica",prioridade:"Alta",alvo:50000,unidade:"R$",notas:"Use o campo Adicionar a cada depósito."},
+ {nome:"Passar no Revalida",area:"Carreira e estudos",tipo:"Etapas",prioridade:"Alta",notas:"2ª etapa (prática) das edições 2026 prevista pelo Inep para 14/03/2027; edital previsto para jan/2027.",etapas:["Confirmar em qual edição e etapa vou prestar","Inscrição na 1ª etapa (teórica)","Aprovação na 1ª etapa","Inscrição na 2ª etapa (habilidades clínicas)","Aprovação na 2ª etapa","Revalidar o diploma e registrar no CRM"]},
+ {nome:"Estudar 600 horas para o Revalida",area:"Carreira e estudos",tipo:"Numérica",prioridade:"Alta",alvo:600,unidade:"horas",notas:"Sugestão."},
+ {nome:"Investir todo mês (12 aportes)",area:"Finanças",tipo:"Numérica",prioridade:"Média",alvo:12,unidade:"aportes",notas:"Sugestão. Adicione 1 a cada mês com aporte feito."},
+ {nome:"Treinar 3x por semana (150 treinos)",area:"Saúde e hábitos",tipo:"Numérica",prioridade:"Média",alvo:150,unidade:"treinos",notas:"Sugestão."},
+ {nome:"Ler 12 livros",area:"Saúde e hábitos",tipo:"Numérica",prioridade:"Baixa",alvo:12,unidade:"livros",notas:"Sugestão."},
+ {nome:"Fazer check-up médico anual",area:"Saúde e hábitos",tipo:"Marco único",prioridade:"Média",prazo:"2027-06-30",notas:"Sugestão."},
+ {nome:"Planejar lua de mel",area:"Pessoal e família",tipo:"Etapas",prioridade:"Média",etapas:["Escolher o destino","Definir o orçamento da viagem","Escolher as datas (logo depois do casamento)","Conferir documentos (passaporte, vistos, vacinas)","Comprar as passagens","Reservar a hospedagem","Montar o roteiro e os passeios"]},
+ {nome:"Fazer uma viagem",area:"Pessoal e família",tipo:"Marco único",prioridade:"Baixa",notas:"Sugestão."}
+];
+let sb=null;
+const norm=d=>({...d,prazo:d.prazo||"",atual:Number(d.atual)||0,alvo:Number(d.alvo)||0,etapas:(d.etapas||[]).map(e=>({...e})),registros:(d.registros||[]).map(r=>({...r}))});
+function mostrar(qual){$("login").hidden=qual!=="login";$("app").hidden=qual!=="app"}
+async function carregar(){
+  const {data,error}=await sb.from("metas").select("*").order("ordem");
+  if(error){aviso("Não consegui carregar suas metas: "+error.message+". Se o projeto no Supabase estiver pausado, abra o painel do Supabase e clique em Resume project.");loaded=true;render();return}
+  aviso("");metas=data.map(norm);loaded=true;render();
+  if(!metas.length)$("grid").innerHTML=`<div class="empty">Nenhuma meta ainda.<br><br><button class="btn primary" type="button" id="btnSeed">Carregar minhas 10 metas iniciais</button></div>`;
+}
+async function semear(){
+  const linhas=SEED.map((x,i)=>limpar({...novaMetaBase({}),...x,ordem:i+1,etapas:(x.etapas||[]).map(t=>({id:uid(),texto:t,feita:false})),registros:[]}));
+  const {error}=await sb.from("metas").insert(linhas);
+  if(error){toast("Não consegui carregar: "+error.message);return}
+  carregar();
+}
+function exportar(){
+  const blob=new Blob([JSON.stringify({exportadoEm:new Date().toISOString(),metas:metas.map(({id,user_id,created_at,updated_at,...r})=>r)},null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="metas-backup-"+hoje()+".json";document.body.appendChild(a);a.click();a.remove();
+}
+async function importar(file){
+  let j;try{j=JSON.parse(await file.text())}catch(e){toast("Esse arquivo não é um backup válido.");return}
+  const lista=Array.isArray(j)?j:j.metas;if(!Array.isArray(lista)){toast("Esse arquivo não é um backup válido.");return}
+  if(metas.length&&!window.confirm("Restaurar vai APAGAR as "+metas.length+" metas atuais e colocar as "+lista.length+" do backup. Continuar?"))return;
+  if(metas.length){const {error}=await sb.from("metas").delete().in("id",metas.map(m=>m.id));if(error){toast("Não consegui limpar: "+error.message);return}}
+  const {error}=await sb.from("metas").insert(lista.map(limpar));
+  if(error){toast("Não consegui restaurar: "+error.message);return}
+  toast("Backup restaurado.");carregar();
+}
+document.addEventListener("click",e=>{if(e.target.id==="btnSeed")semear()});
+$("btnExport").addEventListener("click",exportar);
+$("fImport").addEventListener("change",e=>{const f=e.target.files[0];e.target.value="";if(f)importar(f)});
+$("btnSair").addEventListener("click",async()=>{await sb.auth.signOut();metas=[];loaded=false;mostrar("login")});
+$("loginForm").addEventListener("submit",async e=>{
+  e.preventDefault();$("lErr").textContent="";$("lBtn").disabled=true;
+  const {error}=await sb.auth.signInWithPassword({email:$("lEmail").value.trim(),password:$("lSenha").value});
+  $("lBtn").disabled=false;
+  if(error)$("lErr").textContent=error.message==="Invalid login credentials"?"E-mail ou senha incorretos.":error.message;
+});
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&sb&&!$("app").hidden&&!editId)carregar()});
+
+(async()=>{
+  const C=window.METAS_CONFIG||{};
+  if(!window.supabase||!C.SUPABASE_URL||!C.SUPABASE_KEY||C.SUPABASE_URL.includes("COLE_")){
+    mostrar("login");$("loginForm").hidden=true;
+    document.querySelector("#login p").textContent="Falta configurar: preencha SUPABASE_URL e SUPABASE_KEY no arquivo config.js (veja o README).";return;
+  }
+  sb=window.supabase.createClient(C.SUPABASE_URL,C.SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
+  sb.auth.onAuthStateChange((ev,session)=>{
+    if(session){if($("app").hidden){mostrar("app");$("quem").textContent=session.user.email;render();carregar()}}
+    else mostrar("login");
+  });
+  const {data}=await sb.auth.getSession();
+  if(!data.session)mostrar("login");
+})();
+</script>
+</body>
+</html>
