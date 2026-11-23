@@ -3,7 +3,7 @@
 // banco só entrega dados ao usuário logado (Row Level Security).
 // NUNCA coloque aqui a chave "service_role" / "secret".
 window.METAS_CONFIG = {
-  SUPABASE_URL:https://omckydyqqosfyuslxjtm.supabase.co/rest/v1/
-  SUPABASE_KEY:sb_publishable_0GzNpllN_L7-LSWrLvaSKQ_thIpBmam
+  SUPABASE_URL:"https://omckydyqqosfyuslxjtm.supabase.co",
+  SUPABASE_KEY:"sb_publishable_0GzNpllN_L7-LSWrLvaSKQ_thIpBmam"
 };
 
