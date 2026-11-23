@@ -3,11 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Metas 2027</title>
+<title>Metas</title>
 <meta name="theme-color" content="#2f5bd3">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Metas 2027">
+<meta name="apple-mobile-web-app-title" content="Metas">
 <meta name="robots" content="noindex">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -16,7 +19,7 @@
   /* layout: resumo do ano no topo, trilho de áreas que filtra, grade de cartões de meta; edição numa gaveta lateral */
   --bg:#eef1f6; --surface:#ffffff; --ink:#18202f; --muted:#5b6478; --line:#dde2ea; --accent:#2f5bd3; --accent-soft:#e6ecfb;
   --good:#1d8350; --warn:#b26f12; --bad:#c23b34; --idle:#8a93a5;
-  --a-fin:#1d8350; --a-car:#2f5bd3; --a-sau:#0b8484; --a-pro:#7448cc; --a-pes:#c23f7c;
+  --c1:#1d8350; --c2:#2f5bd3; --c3:#0b8484; --c4:#7448cc; --c5:#c23f7c; --c6:#b26f12; --c7:#c23b34; --c8:#5b6478;
   --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
   --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
   color-scheme: light;
@@ -25,14 +28,14 @@
   :root:not([data-theme="light"]){
     --bg:#10141c; --surface:#181e2a; --ink:#e7ebf3; --muted:#9aa3b6; --line:#2a3242; --accent:#7d9cf5; --accent-soft:#1f2a45;
     --good:#4cc283; --warn:#e3a54a; --bad:#ef7a72; --idle:#6f788b;
-    --a-fin:#4cc283; --a-car:#7d9cf5; --a-sau:#3fc4c4; --a-pro:#a98bf0; --a-pes:#ec7fb1;
+    --c1:#4cc283; --c2:#7d9cf5; --c3:#3fc4c4; --c4:#a98bf0; --c5:#ec7fb1; --c6:#e3a54a; --c7:#ef7a72; --c8:#9aa3b6;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#10141c; --surface:#181e2a; --ink:#e7ebf3; --muted:#9aa3b6; --line:#2a3242; --accent:#7d9cf5; --accent-soft:#1f2a45;
   --good:#4cc283; --warn:#e3a54a; --bad:#ef7a72; --idle:#6f788b;
-  --a-fin:#4cc283; --a-car:#7d9cf5; --a-sau:#3fc4c4; --a-pro:#a98bf0; --a-pes:#ec7fb1;
+  --c1:#4cc283; --c2:#7d9cf5; --c3:#3fc4c4; --c4:#a98bf0; --c5:#ec7fb1; --c6:#e3a54a; --c7:#ef7a72; --c8:#9aa3b6;
   color-scheme: dark;
 }
 *{box-sizing:border-box}
@@ -144,7 +147,24 @@ h1{font-size:34px;font-weight:700;letter-spacing:-.01em}
 .login h1{font-size:28px}
 .login p{margin:0;color:var(--muted);font-size:14px}
 .login .err{color:var(--bad)}
-.topbtns{display:flex;gap:8px;flex-wrap:wrap}
+.topbtns{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.who{display:flex;align-items:center;gap:14px}
+.hello{margin:0 0 2px;color:var(--muted);font-size:14px}
+.avatar{width:46px;height:46px;flex:none;border-radius:50%;border:none;background:var(--accent);color:#fff;font-family:var(--display);font-weight:700;font-size:17px;display:flex;align-items:center;justify-content:center;letter-spacing:.02em}
+.avatar.big{width:72px;height:72px;font-size:26px;cursor:default}
+:root[data-theme="dark"] .avatar{color:#10141c}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .avatar{color:#10141c}}
+.perfil-top{display:flex;gap:14px;align-items:center}
+.perfil-top b{display:block;font-size:18px;font-family:var(--display)}
+.perfil-top span{color:var(--muted);font-size:14px;word-break:break-all}
+.row-btn{display:flex;gap:8px;align-items:flex-end}
+.row-btn .field{flex:1}
+.ok-msg{color:var(--good);font-size:13px;margin:0}
+.err-msg{color:var(--bad);font-size:13px;margin:0}
+.or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+.btn.face{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px}
+.notice .btn{margin-left:8px}
 .foot-tools{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;color:var(--muted);font-size:13px;align-items:center}
 @media (max-width:640px){
   .summary{grid-template-columns:1fr;justify-items:center}
@@ -153,30 +173,75 @@ h1{font-size:34px;font-weight:700;letter-spacing:-.01em}
   .three{grid-template-columns:1fr 1fr}
 }
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
+
+/* v3 */
+.lembretes{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--warn);border-radius:12px;padding:12px 16px;display:flex;flex-direction:column;gap:6px}
+.lembretes h2{font-size:15px}
+.lembretes ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.lembretes button{background:none;border:none;padding:4px 0;text-align:left;display:flex;gap:10px;align-items:baseline;width:100%;font-size:14px}
+.lembretes button:hover b{text-decoration:underline}
+.lembretes .quando{min-width:118px;font-size:13px;font-weight:600}
+.lembretes .late{color:var(--bad)} .lembretes .soon{color:var(--warn)}
+.drag{border:none;background:none;color:var(--muted);cursor:grab;padding:2px 4px;font-size:18px;line-height:1;touch-action:none}
+.drag:active{cursor:grabbing}
+.sortable-ghost{opacity:.35}
+.pill.sh{color:var(--accent);border-style:dashed}
+.semana{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.dia{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:6px 0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;color:var(--muted)}
+.dia b{font-size:14px;color:var(--ink);font-variant-numeric:tabular-nums}
+.dia.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.dia.on b{color:#fff}
+:root[data-theme="dark"] .dia.on, :root[data-theme="dark"] .dia.on b{color:#10141c}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .dia.on,:root:not([data-theme="light"]) .dia.on b{color:#10141c}}
+.dia.hoje{outline:2px solid var(--ac);outline-offset:1px}
+.dia:disabled{opacity:.4;cursor:not-allowed}
+.chart{width:100%;height:auto;display:block}
+.chart text{fill:var(--muted);font-family:var(--body);font-size:10px}
+.chart .v{fill:var(--ink);font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.stats div{background:var(--bg);border-radius:8px;padding:8px 10px}
+.stats b{display:block;font-variant-numeric:tabular-nums}
+.stats span{font-size:12px;color:var(--muted)}
+.share{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.share label{display:flex;gap:10px;align-items:center;padding:6px 2px;cursor:pointer}
+.mini-av{width:28px;height:28px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.area-ed{display:flex;gap:6px;align-items:center}
+.area-ed input{flex:1;min-width:0;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:6px 8px}
+.sw{width:30px;height:30px;border-radius:8px;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);background:var(--ac);flex:none}
 </style>
 <script src="config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 </head>
 <body>
 <section class="login" id="login" hidden>
-  <h1>Metas 2027</h1>
-  <p>Entre com o e-mail e a senha que você criou no Supabase.</p>
+  <h1 class="ttl">Metas</h1>
+  <p id="lIntro">Entre com seu e-mail e senha.</p>
+  <button class="btn face" type="button" id="btnFace" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 9.5v1M15 9.5v1M12 9.5v3.5h-1M9.5 16c1.5 1 3.5 1 5 0"/></svg>Entrar com Face ID / digital</button>
+  <p class="err" id="fErr"></p>
+  <div class="or" id="lOr" hidden>ou</div>
   <form id="loginForm" class="body" style="display:flex;flex-direction:column;gap:12px">
-    <label class="field" for="lEmail"><span>E-mail</span><input id="lEmail" type="email" autocomplete="username" required></label>
+    <label class="field" for="lEmail"><span>E-mail</span><input id="lEmail" type="email" autocomplete="username webauthn" required></label>
     <label class="field" for="lSenha"><span>Senha</span><input id="lSenha" type="password" autocomplete="current-password" required></label>
     <button class="btn primary" type="submit" id="lBtn">Entrar</button>
     <p class="err" id="lErr"></p>
   </form>
 </section>
+
 <div class="wrap" id="app" hidden>
   <div class="top">
-    <div>
-      <h1>Metas 2027</h1>
-      <p id="sub">Carregando suas metas…</p>
+    <div class="who">
+      <button class="avatar" id="btnPerfil" type="button" aria-label="Abrir meu perfil" title="Meu perfil">··</button>
+      <div>
+        <p class="hello" id="hello">Olá!</p>
+        <h1 class="ttl">Metas</h1>
+      </div>
     </div>
     <div class="topbtns"><button class="btn primary" id="btnNova" type="button">+ Nova meta</button></div>
   </div>
+  <p class="hint" id="sub" style="margin-top:-12px">Carregando suas metas…</p>
   <div id="notice" class="notice" hidden></div>
+  <section class="lembretes" id="lembretes" hidden aria-label="Prazos próximos"></section>
 
   <section class="summary" aria-label="Resumo">
     <div class="ring">
@@ -190,7 +255,7 @@ h1{font-size:34px;font-weight:700;letter-spacing:-.01em}
       <div class="tile"><b id="tTotal">0</b><span>metas</span></div>
       <div class="tile t-done"><b id="tDone">0</b><span>concluídas</span></div>
       <div class="tile t-run"><b id="tRun">0</b><span>em andamento</span></div>
-      <div class="tile t-days"><b id="tDays">0</b><span>dias até 31/12/2027</span></div>
+      <div class="tile t-days"><b id="tDays">0</b><span id="tDaysLbl">dias até o fim do ano</span></div>
     </div>
   </section>
 
@@ -199,6 +264,7 @@ h1{font-size:34px;font-weight:700;letter-spacing:-.01em}
   <div class="tools">
     <label for="ordem">Ordenar por
       <select id="ordem">
+        <option value="ordem">Minha ordem</option>
         <option value="prioridade">Prioridade</option>
         <option value="prazo">Prazo</option>
         <option value="progresso">Progresso</option>
@@ -224,64 +290,162 @@ h1{font-size:34px;font-weight:700;letter-spacing:-.01em}
   <header><h2 id="dTitle">Editar meta</h2><button class="btn small" type="button" data-act="fechar">Fechar</button></header>
   <div class="body" id="dBody"></div>
 </aside>
+
+<aside class="drawer" id="perfil" aria-label="Meu perfil">
+  <header><h2>Meu perfil</h2><button class="btn small" type="button" id="pFechar">Fechar</button></header>
+  <div class="body">
+    <div class="perfil-top"><div class="avatar big" id="pAvatar">··</div><div><b id="pNome">—</b><span id="pEmail"></span></div></div>
+    <form class="sec" id="fNome">
+      <h3>Seu nome</h3>
+      <div class="row-btn"><label class="field" for="pNomeIn"><span>Como quer ser chamado</span><input id="pNomeIn" type="text" maxlength="40" autocomplete="name" required></label><button class="btn" type="submit">Salvar</button></div>
+      <p class="hint">Aparece na saudação, nas iniciais do topo e para quem compartilha metas com você.</p>
+    </form>
+    <form class="sec" id="fAno">
+      <h3>Ano das metas</h3>
+      <div class="row-btn"><label class="field" for="pAno"><span>Ano</span><input id="pAno" type="number" min="2024" max="2100" step="1" inputmode="numeric" required></label><button class="btn" type="submit">Salvar</button></div>
+      <p class="hint">Muda o título, a contagem de dias e o prazo padrão das metas novas.</p>
+    </form>
+    <div class="sec">
+      <h3>Minhas áreas</h3>
+      <p class="hint">Toque no quadrado colorido para trocar a cor. Renomear muda também as suas metas daquela área.</p>
+      <div id="areasEd" style="display:flex;flex-direction:column;gap:6px"></div>
+      <form class="quick" id="fArea"><input id="novaArea" type="text" maxlength="30" placeholder="Nova área, ex.: Espiritualidade" aria-label="Nova área"><button class="btn small" type="submit">Adicionar</button></form>
+    </div>
+    <div class="sec" id="secFace">
+      <h3>Entrar com Face ID / digital</h3>
+      <p class="hint" id="faceHint">Ative neste aparelho e, da próxima vez, entre sem digitar a senha.</p>
+      <ul class="hist" id="faceLista"></ul>
+      <button class="btn" type="button" id="btnFaceAtivar">Ativar neste aparelho</button>
+      <p class="ok-msg" id="faceOk"></p><p class="err-msg" id="faceErr"></p>
+    </div>
+    <form class="sec" id="fSenha">
+      <h3>Trocar senha</h3>
+      <label class="field" for="pS1"><span>Nova senha</span><input id="pS1" type="password" minlength="8" autocomplete="new-password" required></label>
+      <label class="field" for="pS2"><span>Repita a nova senha</span><input id="pS2" type="password" minlength="8" autocomplete="new-password" required></label>
+      <button class="btn" type="submit">Trocar senha</button>
+      <p class="ok-msg" id="senhaOk"></p><p class="err-msg" id="senhaErr"></p>
+    </form>
+    <div class="sec"><button class="btn danger" type="button" id="pSair">Sair desta conta</button><p class="hint">Neste aparelho você continua conectado até tocar em Sair.</p></div>
+  </div>
+</aside>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
-const AREAS=[
-  {k:"Finanças",c:"var(--a-fin)"},
-  {k:"Carreira e estudos",c:"var(--a-car)"},
-  {k:"Saúde e hábitos",c:"var(--a-sau)"},
-  {k:"Projetos pessoais",c:"var(--a-pro)"},
-  {k:"Pessoal e família",c:"var(--a-pes)"}
-];
+/* ================= Metas: app ================= */
+const DEF_AREAS=[{k:"Finanças",c:1},{k:"Carreira e estudos",c:2},{k:"Saúde e hábitos",c:3},{k:"Projetos pessoais",c:4},{k:"Pessoal e família",c:5}];
 const STATUS=["Não iniciada","Em andamento","Concluída","Pausada"];
 const STATUS_CLS={"Não iniciada":"s-idle","Em andamento":"s-run","Concluída":"s-done","Pausada":"s-pause"};
 const PRIOS=["Alta","Média","Baixa"];
 const PRIO_CLS={"Alta":"p-alta","Média":"p-media","Baixa":"p-baixa"};
-const TIPOS=["Numérica","Etapas","Marco único"];
+const TIPOS=["Numérica","Etapas","Marco único","Hábito semanal"];
+const SEMANA=["seg","ter","qua","qui","sex","sáb","dom"];
+const MESES=["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
 
-let db=null, metas=[], loaded=false, filtroArea=null, editId=null;
+let sb=null, usuario=null, prefs={}, metas=[], perfis={}, loaded=false, erroCarga=false, semCompartilhar=false;
+let filtroArea=null, editId=null, sortable=null;
+
+/* ---------- utilidades ---------- */
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const areaColor=a=>(AREAS.find(x=>x.k===a)||{c:"var(--accent)"}).c;
 const uid=()=>Math.random().toString(36).slice(2,10);
-const hoje=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const pad=n=>String(n).padStart(2,"0");
+const iso=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const hoje=()=>iso(new Date());
+const deIso=s=>{const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)};
+function segunda(d){const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());const w=(x.getDay()+6)%7;x.setDate(x.getDate()-w);return x}
+const semanaDe=s=>iso(segunda(deIso(s)));
+function lerNumero(v){
+  let t=String(v??"").trim().replace(/\s|R\$/g,"");
+  if(t.includes(","))t=t.replace(/\./g,"").replace(",",".");
+  else if(/^-?\d{1,3}(\.\d{3})+$/.test(t))t=t.replace(/\./g,"");
+  return parseFloat(t);
+}
 const pctTxt=p=>{const v=p*100;return (v>0&&v<10?v.toLocaleString("pt-BR",{maximumFractionDigits:1}):Math.round(v))+"%"};
 const num=n=>Number(n||0).toLocaleString("pt-BR",{maximumFractionDigits:2});
 const comUnidade=(n,u)=>u==="R$"?"R$ "+num(n):num(n)+(u?" "+u:"");
 const dataBR=s=>{if(!s)return"";const [y,m,d]=s.split("-");return d+"/"+m+"/"+y};
-function diasAte(s){if(!s)return null;const [y,m,d]=s.split("-").map(Number);const alvo=new Date(y,m-1,d);const h=new Date();h.setHours(0,0,0,0);return Math.round((alvo-h)/86400000)}
+function diasAte(s){if(!s)return null;const h=new Date();h.setHours(0,0,0,0);return Math.round((deIso(s)-h)/86400000)}
+const arred=n=>Math.round(n*100)/100;
 
+/* ---------- preferências (guardadas na conta) ---------- */
+const ano=()=>{const a=parseInt(prefs.ano,10);return a>=2000&&a<=2100?a:2027};
+function minhasAreas(){const a=Array.isArray(prefs.areas)&&prefs.areas.length?prefs.areas:DEF_AREAS;return a.filter(x=>x&&x.k)}
+function todasAreas(){const l=minhasAreas().slice();metas.forEach(m=>{if(m.area&&!l.some(a=>a.k===m.area))l.push({k:m.area,c:8,extra:true})});return l}
+const corArea=k=>"var(--c"+((todasAreas().find(a=>a.k===k)||{c:8}).c)+")";
+async function salvarPrefs(obj){
+  prefs={...prefs,...obj};
+  const {data,error}=await sb.auth.updateUser({data:obj});
+  if(error){toast("Não consegui salvar a preferência: "+error.message);return false}
+  usuario=data.user;prefs=usuario.user_metadata||{};return true;
+}
+
+/* ---------- pessoas ---------- */
+const souDono=m=>!!usuario&&m.user_id===usuario.id;
+const membrosDe=m=>(m.meta_membros||[]).map(x=>x.user_id);
+const compartilhada=m=>membrosDe(m).filter(id=>id!==m.user_id).length>0||!souDono(m);
+function nomePessoa(id){const p=perfis[id];if(!p)return"alguém da família";return (p.nome||"").trim()||(p.email||"").split("@")[0]}
+const primeiroNome=id=>nomePessoa(id).split(/\s+/)[0];
+function iniciaisDe(nome,email){
+  const n=(nome||"").trim();
+  if(n){const p=n.split(/\s+/).filter(Boolean);return ((p[0]||"")[0]+(p.length>1?p[p.length-1][0]:"")).toUpperCase()}
+  return (email||"?").slice(0,2).toUpperCase();
+}
+
+/* ---------- progresso ---------- */
+function contagemSemanas(m){const c={};(m.dias||[]).forEach(d=>{const k=semanaDe(d);c[k]=(c[k]||0)+1});return c}
+function semanasCumpridas(m){const v=Math.max(1,Number(m.vezes)||1);return Object.values(contagemSemanas(m)).filter(n=>n>=v).length}
+function sequencia(m){
+  const v=Math.max(1,Number(m.vezes)||1),c=contagemSemanas(m);let s=0;
+  let w=segunda(new Date());
+  if((c[iso(w)]||0)<v)w.setDate(w.getDate()-7); // semana atual ainda em andamento
+  while((c[iso(w)]||0)>=v){s++;w.setDate(w.getDate()-7)}
+  return s;
+}
 function progresso(m){
   if(m.tipo==="Numérica"){const a=Number(m.atual)||0,t=Number(m.alvo)||0;return t>0?Math.max(0,Math.min(1,a/t)):0}
+  if(m.tipo==="Hábito semanal"){const t=Number(m.alvo)||0;return t>0?Math.min(1,semanasCumpridas(m)/t):0}
   if(m.status==="Concluída"&&m.tipo==="Marco único")return 1;
   const et=m.etapas||[];
   if(!et.length)return m.status==="Concluída"?1:0;
   return et.filter(e=>e.feita).length/et.length;
 }
-// Ajusta o status sozinho quando o progresso muda por uma ação sua
 function comStatus(m,patch){
   const n={...m,...patch};const p=progresso(n);
-  if(n.status==="Pausada")return patch;
+  if(n.status==="Pausada"||"status" in patch)return patch;
   if(p>=1&&n.status!=="Concluída")patch.status="Concluída";
-  else if(p>0&&p<1&&n.status!=="Em andamento")patch.status="Em andamento";
-  else if(p===0&&n.status==="Em andamento"&&!(n.registros||[]).length)patch.status="Não iniciada";
+  else if(p<1&&n.status==="Não iniciada"&&(p>0||(n.dias||[]).length||(n.registros||[]).length))patch.status="Em andamento";
+  else if(p>0&&p<1&&n.status==="Concluída")patch.status="Em andamento";
+  else if(p===0&&n.status==="Em andamento"&&!(n.registros||[]).length&&!(n.dias||[]).length)patch.status="Não iniciada";
   return patch;
 }
 
-/* ---------- gravação (Supabase) ---------- */
-const CAMPOS=["nome","area","tipo","prioridade","status","prazo","atual","alvo","unidade","notas","ordem","etapas","registros"];
-const limpar=o=>{const r={};for(const k of CAMPOS)if(k in o)r[k]=(k==="prazo"&&!o[k])?null:o[k];return r};
+/* ---------- banco ---------- */
+const CAMPOS=["nome","area","tipo","prioridade","status","prazo","atual","alvo","unidade","notas","ordem","etapas","registros","vezes","dias"];
+const limpar=o=>{const r={};for(const k of CAMPOS)if(k in o){if(semCompartilhar&&(k==="vezes"||k==="dias"))continue;r[k]=(k==="prazo"&&!o[k])?null:o[k]}return r};
+const norm=d=>({...d,prazo:d.prazo||"",atual:Number(d.atual)||0,alvo:Number(d.alvo)||0,vezes:Number(d.vezes)||3,
+  etapas:(d.etapas||[]).map(e=>({...e})),registros:(d.registros||[]).map(r=>({...r})),dias:(d.dias||[]).slice(),meta_membros:(d.meta_membros||[]).map(x=>({...x}))});
+const SEL=()=>semCompartilhar?"*":"*, meta_membros(user_id)";
 const filas={};
-function salvar(id,patch){
+// Aplica a mudança na tela na hora e grava no banco a partir da versão mais nova da meta
+// (importante quando duas pessoas mexem na mesma meta compartilhada).
+function gravar(id,fazer){
   const m=metas.find(x=>x.id===id);if(!m)return;
-  Object.assign(m,patch);render();if(editId===id)$("dTitle").textContent=m.nome||"Editar meta";
-  filas[id]=(filas[id]||Promise.resolve()).then(async()=>{const{error}=await sb.from("metas").update(limpar(patch)).eq("id",id);if(error)throw error})
-    .catch(e=>toast("Não consegui salvar: "+(e.message||"erro")+". Recarregue a página."));
+  const local=fazer(m);if(!local||!Object.keys(local).length)return;
+  Object.assign(m,comStatus(m,local));render();if(editId===id&&!$("drawer").contains(document.activeElement))desenharGaveta();
+  filas[id]=(filas[id]||Promise.resolve()).then(async()=>{
+    const {data:fresca,error:e1}=await sb.from("metas").select(SEL()).eq("id",id).single();
+    if(e1)throw e1;
+    const base=norm(fresca);const patch=fazer(base);if(!patch||!Object.keys(patch).length)return;
+    const {data,error}=await sb.from("metas").update(limpar(comStatus(base,patch))).eq("id",id).select(SEL()).single();
+    if(error)throw error;
+    const i=metas.findIndex(x=>x.id===id);if(i>=0)metas[i]=norm(data);
+    render();if(editId===id&&!$("drawer").contains(document.activeElement))desenharGaveta();
+  }).catch(e=>toast("Não consegui salvar: "+(e.message||"erro")+". Recarregue a página."));
 }
-function novaMetaBase(o){return{nome:"Nova meta",area:filtroArea||"Pessoal e família",tipo:"Etapas",prioridade:"Média",status:"Não iniciada",prazo:"2027-12-31",atual:0,alvo:0,unidade:"",notas:"",ordem:metas.reduce((a,m)=>Math.max(a,m.ordem||0),0)+1,etapas:[],registros:[],...o}}
+const salvar=(id,patch)=>gravar(id,()=>({...patch}));
+function novaMetaBase(o){return{nome:"Nova meta",area:filtroArea||minhasAreas()[0].k,tipo:"Etapas",prioridade:"Média",status:"Não iniciada",prazo:ano()+"-12-31",atual:0,alvo:0,unidade:"",notas:"",ordem:Date.now()%1e9,etapas:[],registros:[],vezes:3,dias:[],...o}}
 async function criarMeta(){
-  const {data,error}=await sb.from("metas").insert(limpar(novaMetaBase({}))).select().single();
+  const {data,error}=await sb.from("metas").insert(limpar(novaMetaBase({}))).select(SEL()).single();
   if(error){toast("Não consegui criar a meta: "+error.message);return}
   metas.push(norm(data));render();abrir(data.id);
 }
@@ -290,43 +454,105 @@ async function excluirMeta(id){
   if(error){toast("Não consegui excluir: "+error.message);return}
   metas=metas.filter(m=>m.id!==id);fechar();render();toast("Meta excluída.");
 }
+async function sairDaMeta(id){
+  const {error}=await sb.from("meta_membros").delete().eq("meta_id",id).eq("user_id",usuario.id);
+  if(error){toast("Não consegui sair da meta: "+error.message);return}
+  metas=metas.filter(m=>m.id!==id);fechar();render();toast("Você saiu da meta.");
+}
+async function alternarMembro(id,pessoa,ligar){
+  const m=metas.find(x=>x.id===id);if(!m)return;
+  const q=ligar?sb.from("meta_membros").insert({meta_id:id,user_id:pessoa}):sb.from("meta_membros").delete().eq("meta_id",id).eq("user_id",pessoa);
+  const {error}=await q;
+  if(error){toast("Não consegui atualizar o compartilhamento: "+error.message);desenharGaveta();return}
+  m.meta_membros=ligar?[...(m.meta_membros||[]),{user_id:pessoa}]:(m.meta_membros||[]).filter(x=>x.user_id!==pessoa);
+  render();toast(ligar?"Compartilhada com "+primeiroNome(pessoa)+".":"Deixou de compartilhar com "+primeiroNome(pessoa)+".");
+}
+
 /* ---------- ações nos cartões ---------- */
 function adicionarValor(id){
   const m=metas.find(x=>x.id===id);const inp=$("q-"+id);
-  const v=parseFloat(String(inp.value).replace(",","."));
+  const v=lerNumero(inp.value);
   if(!v){inp.focus();return}
-  const registros=[...(m.registros||[]).map(r=>({...r})),{id:uid(),valor:v,data:hoje()}].slice(-500);
-  const atual=Math.round(((Number(m.atual)||0)+v)*100)/100;
-  salvar(id,comStatus(m,{atual,registros}));
+  const rid=uid(),d=hoje();
+  gravar(id,b=>({atual:arred((Number(b.atual)||0)+v),registros:[...(b.registros||[]),{id:rid,valor:v,data:d}].slice(-500)}));
   toast((v>0?"+":"")+comUnidade(v,m.unidade)+" em "+m.nome);
 }
-function marcarEtapa(id,eid,feita){
-  const m=metas.find(x=>x.id===id);
-  const etapas=(m.etapas||[]).map(e=>e.id===eid?{...e,feita}:{...e});
-  salvar(id,comStatus(m,{etapas}));
-}
-function marcoConcluir(id){
-  const m=metas.find(x=>x.id===id);
-  salvar(id,{status:m.status==="Concluída"?"Em andamento":"Concluída"});
-}
+function marcarEtapa(id,eid,feita){gravar(id,b=>({etapas:(b.etapas||[]).map(e=>e.id===eid?{...e,feita}:e)}))}
+function marcarDia(id,dia,on){gravar(id,b=>{const s=new Set(b.dias||[]);on?s.add(dia):s.delete(dia);return{dias:[...s].sort()}})}
+function marcoConcluir(id){const m=metas.find(x=>x.id===id);salvar(id,{status:m.status==="Concluída"?"Em andamento":"Concluída"})}
 
-/* ---------- desenho ---------- */
-function ordenadas(){
+/* ---------- ordem ---------- */
+const PR=m=>PRIOS.indexOf(m.prioridade)<0?9:PRIOS.indexOf(m.prioridade);
+const chaveOrdem=m=>{const o=prefs.ordem&&prefs.ordem[m.id];return typeof o==="number"?o:1e6+(Number(m.ordem)||0)};
+function ordenar(l,modo){
+  return l.slice().sort((a,b)=>{
+    if(modo==="prazo")return (a.prazo||"9999").localeCompare(b.prazo||"9999");
+    if(modo==="progresso")return progresso(b)-progresso(a);
+    if(modo==="nome")return (a.nome||"").localeCompare(b.nome||"","pt-BR");
+    if(modo==="prioridade")return PR(a)-PR(b)||chaveOrdem(a)-chaveOrdem(b);
+    return chaveOrdem(a)-chaveOrdem(b);
+  });
+}
+function visiveis(){
   let l=metas.slice();
   if(filtroArea)l=l.filter(m=>m.area===filtroArea);
   if($("ocultar").checked)l=l.filter(m=>m.status!=="Concluída");
-  const o=$("ordem").value;
-  const pr=m=>PRIOS.indexOf(m.prioridade)<0?9:PRIOS.indexOf(m.prioridade);
-  l.sort((a,b)=>{
-    if(o==="prazo")return (a.prazo||"9999").localeCompare(b.prazo||"9999");
-    if(o==="progresso")return progresso(b)-progresso(a);
-    if(o==="nome")return (a.nome||"").localeCompare(b.nome||"","pt-BR");
-    return pr(a)-pr(b)||(a.ordem||0)-(b.ordem||0);
-  });
-  return l;
+  return ordenar(l,$("ordem").value);
 }
+function salvarOrdemArrastada(){
+  const vis=[...$("grid").querySelectorAll(".card")].map(c=>c.dataset.id);
+  const todos=ordenar(metas,"ordem").map(m=>m.id);
+  const pos=todos.map((id,i)=>vis.includes(id)?i:-1).filter(i=>i>=0);
+  pos.forEach((p,i)=>{todos[p]=vis[i]});
+  const ordem={};todos.forEach((id,i)=>ordem[id]=i);
+  prefs.ordem=ordem;render();salvarPrefs({ordem});
+}
+
+/* ---------- gráfico ---------- */
+function grafico(barras,{fmt=num,meta=null,cor="var(--accent)"}={}){
+  const W=420,H=170,L=8,R=8,T=18,B=22,n=barras.length||1;
+  const max=Math.max(meta||0,...barras.map(b=>b.v),1);
+  const cw=(W-L-R)/n,bw=Math.min(34,cw*.62);
+  const y=v=>T+(H-T-B)*(1-v/max);
+  let s=`<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfico">`;
+  [0.5,1].forEach(f=>{s+=`<line x1="${L}" x2="${W-R}" y1="${y(max*f)}" y2="${y(max*f)}" stroke="var(--line)" stroke-dasharray="2 4"/>`});
+  s+=`<line x1="${L}" x2="${W-R}" y1="${H-B}" y2="${H-B}" stroke="var(--line)"/>`;
+  barras.forEach((b,i)=>{
+    const x=L+cw*i+(cw-bw)/2,yy=y(Math.max(0,b.v)),h=H-B-yy;
+    const ult=i===barras.length-1;
+    s+=`<rect x="${x.toFixed(1)}" y="${yy.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(0,h).toFixed(1)}" rx="3" fill="${cor}" opacity="${ult?1:.55}"/>`;
+    if(b.v>0&&(n<=8||ult||b.v===Math.max(...barras.map(z=>z.v))))s+=`<text class="v" x="${(x+bw/2).toFixed(1)}" y="${(yy-4).toFixed(1)}" text-anchor="middle">${esc(fmt(b.v))}</text>`;
+    s+=`<text x="${(x+bw/2).toFixed(1)}" y="${H-7}" text-anchor="middle">${esc(b.rot)}</text>`;
+  });
+  if(meta){const ym=y(meta);s+=`<line x1="${L}" x2="${W-R}" y1="${ym}" y2="${ym}" stroke="var(--warn)" stroke-dasharray="5 4" stroke-width="1.5"/><text x="${W-R}" y="${ym-4}" text-anchor="end" style="fill:var(--warn)">meta ${esc(fmt(meta))}</text>`}
+  return s+"</svg>";
+}
+function evolucaoNumerica(m){
+  const regs=m.registros||[];if(!regs.length)return `<p class="hint">O gráfico aparece quando você registrar o primeiro avanço.</p>`;
+  const somas={};regs.forEach(r=>{const k=(r.data||"").slice(0,7);somas[k]=(somas[k]||0)+Number(r.valor||0)});
+  const h=new Date();const meses=[];const primeiro=Object.keys(somas).sort()[0];
+  for(let i=11;i>=0;i--){const d=new Date(h.getFullYear(),h.getMonth()-i,1);const k=d.getFullYear()+"-"+pad(d.getMonth()+1);if(k>=primeiro||i<6)meses.push({k,rot:MESES[d.getMonth()]})}
+  const barras=meses.map(x=>({rot:x.rot,v:arred(somas[x.k]||0)}));
+  const ult3=barras.slice(-3),media=ult3.reduce((s,b)=>s+b.v,0)/ult3.length;
+  const melhor=Math.max(...barras.map(b=>b.v));
+  const falta=Math.max(0,(Number(m.alvo)||0)-(Number(m.atual)||0));
+  let prev="—";
+  if(falta===0)prev="alvo atingido";else if(media>0){const meses=Math.ceil(falta/media);const d=new Date(h.getFullYear(),h.getMonth()+meses,1);prev=MESES[d.getMonth()]+"/"+d.getFullYear()}
+  const f=v=>comUnidade(v,m.unidade);
+  return grafico(barras,{fmt:v=>m.unidade==="R$"?num(Math.round(v)):num(v)})+
+   `<div class="stats"><div><b>${esc(f(arred(media)))}</b><span>média dos últimos 3 meses</span></div><div><b>${esc(f(melhor))}</b><span>melhor mês</span></div><div><b>${esc(prev)}</b><span>no ritmo atual, chega ao alvo em</span></div></div>`;
+}
+function evolucaoHabito(m){
+  const c=contagemSemanas(m),v=Math.max(1,Number(m.vezes)||1);const seg=segunda(new Date());const barras=[];
+  for(let i=11;i>=0;i--){const d=new Date(seg);d.setDate(d.getDate()-7*i);barras.push({rot:pad(d.getDate())+"/"+pad(d.getMonth()+1),v:c[iso(d)]||0})}
+  return grafico(barras,{meta:v,cor:"var(--good)"})+
+   `<div class="stats"><div><b>${semanasCumpridas(m)}</b><span>semanas cumpridas</span></div><div><b>${sequencia(m)}</b><span>semanas seguidas</span></div><div><b>${(m.dias||[]).length}</b><span>dias registrados</span></div></div>`;
+}
+
+/* ---------- desenho ---------- */
 function render(){
-  // resumo
+  document.title="Metas "+ano();
+  document.querySelectorAll(".ttl").forEach(e=>e.textContent="Metas "+ano());
   const tot=metas.length;
   const geral=tot?metas.reduce((s,m)=>s+progresso(m),0)/tot:0;
   $("pctGeral").textContent=pctTxt(geral);
@@ -334,30 +560,48 @@ function render(){
   $("tTotal").textContent=tot;
   $("tDone").textContent=metas.filter(m=>m.status==="Concluída").length;
   $("tRun").textContent=metas.filter(m=>m.status==="Em andamento").length;
-  $("tDays").textContent=Math.max(0,diasAte("2027-12-31"));
-  if(loaded)$("sub").textContent=tot?"Toque numa etapa ou adicione um valor: o progresso se atualiza na hora.":"Comece criando sua primeira meta.";
+  $("tDays").textContent=Math.max(0,diasAte(ano()+"-12-31"));
+  $("tDaysLbl").textContent="dias até 31/12/"+ano();
+  if(loaded)$("sub").textContent=erroCarga?"":tot?"Toque numa etapa, num dia ou adicione um valor: o progresso se atualiza na hora.":"Comece criando sua primeira meta.";
+
+  // lembretes de prazo
+  const prox=metas.filter(m=>m.prazo&&m.status!=="Concluída"&&m.status!=="Pausada").map(m=>({m,d:diasAte(m.prazo)})).filter(x=>x.d<=30).sort((a,b)=>a.d-b.d);
+  const lb=$("lembretes");
+  if(prox.length){
+    lb.hidden=false;
+    lb.innerHTML=`<h2>Prazos próximos</h2><ul>${prox.slice(0,6).map(({m,d})=>`<li><button type="button" data-act="editar" data-id="${m.id}"><span class="quando ${d<0?"late":"soon"}">${d<0?"Atrasada "+(-d)+" dia"+(-d===1?"":"s"):d===0?"Vence hoje":"Vence em "+d+" dia"+(d===1?"":"s")}</span><b>${esc(m.nome)}</b><span class="hint">${pctTxt(progresso(m))}</span></button></li>`).join("")}</ul>${prox.length>6?`<p class="hint">e mais ${prox.length-6}.</p>`:""}`;
+  }else lb.hidden=true;
 
   // áreas
-  $("areas").innerHTML=[{k:null,c:"var(--accent)"}].concat(AREAS).map(a=>{
+  const areas=todasAreas();
+  if(filtroArea&&!areas.some(a=>a.k===filtroArea))filtroArea=null;
+  $("areas").innerHTML=[{k:null,c:0}].concat(areas).map(a=>{
     const l=a.k?metas.filter(m=>m.area===a.k):metas;
     const p=l.length?l.reduce((s,m)=>s+progresso(m),0)/l.length:0;
-    return `<button type="button" class="area ${filtroArea===a.k?"on":""}" style="--ac:${a.c}" data-act="area" data-area="${esc(a.k||"")}">
+    const cor=a.k?"var(--c"+a.c+")":"var(--accent)";
+    return `<button type="button" class="area ${filtroArea===a.k?"on":""}" style="--ac:${cor}" data-act="area" data-area="${esc(a.k||"")}">
       <div class="row"><b>${a.k?esc(a.k):"Todas as áreas"}</b><span>${l.length} · ${pctTxt(p)}</span></div>
       <div class="bar"><i style="width:${(p*100).toFixed(1)}%"></i></div></button>`;
   }).join("");
   $("filtroInfo").textContent=filtroArea?"Mostrando: "+filtroArea:"";
 
   // cartões
-  const l=ordenadas();
   if(!loaded){$("grid").innerHTML=`<div class="empty">Carregando…</div>`;return}
-  if(!l.length){$("grid").innerHTML=`<div class="empty">${metas.length?"Nenhuma meta neste filtro.":"Nenhuma meta ainda. Use “+ Nova meta” para começar."}</div>`;return}
+  if(erroCarga){$("grid").innerHTML=`<div class="empty">Suas metas não puderam ser carregadas agora. Veja o aviso acima e tente recarregar a página.</div>`;return}
+  if(!metas.length){$("grid").innerHTML=`<div class="empty">Você ainda não tem metas.<br><br><div class="topbtns" style="justify-content:center"><button class="btn primary" type="button" id="btnSeed">Começar com metas de exemplo</button><button class="btn" type="button" id="btnZero">Começar do zero</button></div><p class="hint" style="margin-top:12px">Os exemplos podem ser editados ou apagados depois.</p></div>`;return}
+  const l=visiveis();
+  if(!l.length){$("grid").innerHTML=`<div class="empty">Nenhuma meta neste filtro.</div>`;return}
   $("grid").innerHTML=l.map(cartao).join("");
+  if(sortable)sortable.option("disabled",$("ordem").value!=="ordem");
 }
 function cartao(m){
-  const p=progresso(m), c=areaColor(m.area), d=diasAte(m.prazo);
-  const st=m.status||"Não iniciada";
+  const p=progresso(m),c=corArea(m.area),d=diasAte(m.prazo);
+  const st=m.status||"Não iniciada";const modoOrdem=$("ordem").value==="ordem";
   let prazo="";
   if(m.prazo){prazo=st==="Concluída"?"Prazo "+dataBR(m.prazo):d<0?`<span class="late">Atrasada ${-d} dia${-d===1?"":"s"}</span>`:`Prazo ${dataBR(m.prazo)} · faltam ${d} dias`}
+  let share="";
+  if(!souDono(m))share=`<span class="pill sh">De ${esc(primeiroNome(m.user_id))}</span>`;
+  else{const mb=membrosDe(m);if(mb.length)share=`<span class="pill sh">Com ${esc(mb.map(primeiroNome).join(", "))}</span>`}
   let corpo="";
   if(m.tipo==="Numérica"){
     const regs=m.registros||[];const ult=regs[regs.length-1];
@@ -368,6 +612,13 @@ function cartao(m){
         <button class="btn small primary" type="submit">Adicionar</button>
       </form>
       <div class="meta-line"><span>${ult?"Último: "+(ult.valor>0?"+":"")+esc(comUnidade(ult.valor,m.unidade))+" em "+dataBR(ult.data):"Nenhum avanço registrado ainda"}</span><span>${falta>0?"Faltam "+esc(comUnidade(falta,m.unidade)):"Alvo atingido"}</span></div>`;
+  }else if(m.tipo==="Hábito semanal"){
+    const seg=segunda(new Date()),hj=hoje(),set=new Set(m.dias||[]),v=Math.max(1,Number(m.vezes)||1);
+    let feitos=0;const bt=SEMANA.map((nm,i)=>{const dd=new Date(seg);dd.setDate(dd.getDate()+i);const k=iso(dd);const on=set.has(k);if(on)feitos++;
+      return `<button type="button" class="dia ${on?"on":""} ${k===hj?"hoje":""}" data-act="dia" data-id="${m.id}" data-d="${k}" aria-pressed="${on}" aria-label="${nm} ${dataBR(k)}" ${k>hj?"disabled":""}>${nm}<b>${dd.getDate()}</b></button>`}).join("");
+    corpo=`<div class="semana">${bt}</div>
+      <div class="meta-line"><span>Esta semana: <b>${feitos} de ${v}</b>${feitos>=v?" · cumprida":""}</span><span>Sequência: ${sequencia(m)} sem.</span></div>
+      <div class="meta-line"><span>${semanasCumpridas(m)} de ${num(m.alvo)} semanas cumpridas</span></div>`;
   }else{
     const et=m.etapas||[];
     corpo=et.length?`<ul class="steps">${et.map(e=>`<li><label><input type="checkbox" data-act="etapa" data-id="${m.id}" data-eid="${e.id}" ${e.feita?"checked":""}><span class="${e.feita?"ok":""}">${esc(e.texto)}</span></label></li>`).join("")}</ul>
@@ -375,9 +626,9 @@ function cartao(m){
       :`<p class="hint">${m.tipo==="Marco único"?"Sem etapas: marque como concluída quando acontecer.":"Nenhuma etapa ainda. Use Editar para adicionar."}</p>`;
     if(m.tipo==="Marco único")corpo+=`<button class="btn small" type="button" data-act="marco" data-id="${m.id}">${st==="Concluída"?"Reabrir meta":"Marcar como concluída"}</button>`;
   }
-  return `<article class="card ${st==="Concluída"?"done":""}" style="--ac:${c}">
-    <div class="head"><div><div class="area-name">${esc(m.area)}</div><h3>${esc(m.nome)}</h3></div></div>
-    <div class="pills"><span class="pill ${STATUS_CLS[st]||"s-idle"}">${esc(st)}</span><span class="pill ${PRIO_CLS[m.prioridade]||"p-baixa"}">Prioridade ${esc((m.prioridade||"").toLowerCase())}</span></div>
+  return `<article class="card ${st==="Concluída"?"done":""}" style="--ac:${c}" data-id="${m.id}">
+    <div class="head"><div><div class="area-name">${esc(m.area)}</div><h3>${esc(m.nome)}</h3></div>${modoOrdem?`<button class="drag" type="button" title="Arraste para mudar a ordem" aria-label="Arrastar ${esc(m.nome)}">⋮⋮</button>`:""}</div>
+    <div class="pills"><span class="pill ${STATUS_CLS[st]||"s-idle"}">${esc(st)}</span><span class="pill ${PRIO_CLS[m.prioridade]||"p-baixa"}">Prioridade ${esc((m.prioridade||"").toLowerCase())}</span>${share}</div>
     <div class="prog"><div class="bar"><i style="width:${(p*100).toFixed(1)}%"></i></div><b>${pctTxt(p)}</b></div>
     ${corpo}
     <div class="meta-line"><span>${prazo}</span></div>
@@ -386,42 +637,57 @@ function cartao(m){
 }
 
 /* ---------- gaveta de edição ---------- */
-function abrir(id){editId=id;desenharGaveta();$("drawer").classList.add("open");$("scrim").classList.add("open");setTimeout(()=>{const f=$("f-nome");if(f)f.focus()},50)}
-function fechar(){editId=null;$("drawer").classList.remove("open");$("scrim").classList.remove("open")}
+function abrir(id){fecharPerfil();editId=id;desenharGaveta();$("drawer").classList.add("open");$("scrim").classList.add("open")}
+function fechar(){editId=null;$("drawer").classList.remove("open");if(!$("perfil").classList.contains("open"))$("scrim").classList.remove("open")}
 const opts=(lista,v)=>lista.map(x=>`<option ${x===v?"selected":""}>${esc(x)}</option>`).join("");
 function desenharGaveta(){
   const m=metas.find(x=>x.id===editId);if(!m){fechar();return}
   $("dTitle").textContent=m.nome||"Editar meta";
-  const num=m.tipo==="Numérica";
+  const tipo=m.tipo,dono=souDono(m);
+  const areas=todasAreas().map(a=>a.k);if(m.area&&!areas.includes(m.area))areas.push(m.area);
+  let compart="";
+  if(!semCompartilhar){
+    if(dono){
+      const outros=Object.keys(perfis).filter(id=>id!==usuario.id);const mb=membrosDe(m);
+      compart=`<div class="sec"><h3>Compartilhar</h3>${outros.length?`<p class="hint">Quem você marcar vê esta meta e pode atualizar o progresso. Só você pode excluí-la.</p><ul class="share">${outros.map(id=>`<li><label for="sh-${id}"><input type="checkbox" id="sh-${id}" data-share="${id}" ${mb.includes(id)?"checked":""}><span class="mini-av">${esc(iniciaisDe(perfis[id].nome,perfis[id].email))}</span><span>${esc(nomePessoa(id))}<br><small class="hint">${esc(perfis[id].email)}</small></span></label></li>`).join("")}</ul>`:`<p class="hint">Quando houver outras pessoas cadastradas, elas aparecem aqui.</p>`}</div>`;
+    }else compart=`<div class="sec"><h3>Compartilhada</h3><p class="hint">Esta meta é de ${esc(nomePessoa(m.user_id))}. Você pode atualizar o progresso e editar, mas só ${esc(primeiroNome(m.user_id))} pode excluí-la.</p></div>`;
+  }
   $("dBody").innerHTML=`
     <label class="field" for="f-nome"><span>Meta</span><input id="f-nome" type="text" value="${esc(m.nome)}" data-f="nome"></label>
     <div class="two">
-      <label class="field" for="f-area"><span>Área</span><select id="f-area" data-f="area">${opts(AREAS.map(a=>a.k),m.area)}</select></label>
-      <label class="field" for="f-tipo"><span>Tipo</span><select id="f-tipo" data-f="tipo">${opts(TIPOS,m.tipo)}</select></label>
+      <label class="field" for="f-area"><span>Área</span><select id="f-area" data-f="area">${opts(areas,m.area)}</select></label>
+      <label class="field" for="f-tipo"><span>Tipo</span><select id="f-tipo" data-f="tipo">${opts(TIPOS,tipo)}</select></label>
       <label class="field" for="f-status"><span>Status</span><select id="f-status" data-f="status">${opts(STATUS,m.status)}</select></label>
       <label class="field" for="f-prio"><span>Prioridade</span><select id="f-prio" data-f="prioridade">${opts(PRIOS,m.prioridade)}</select></label>
     </div>
     <label class="field" for="f-prazo"><span>Prazo</span><input id="f-prazo" type="date" value="${esc(m.prazo||"")}" data-f="prazo"></label>
-    ${num?`<div class="three">
+    ${tipo==="Numérica"?`<div class="three">
       <label class="field" for="f-atual"><span>Valor atual</span><input id="f-atual" type="text" inputmode="decimal" value="${esc(m.atual??0)}" data-f="atual" data-num="1"></label>
       <label class="field" for="f-alvo"><span>Alvo</span><input id="f-alvo" type="text" inputmode="decimal" value="${esc(m.alvo??0)}" data-f="alvo" data-num="1"></label>
       <label class="field" for="f-un"><span>Unidade</span><input id="f-un" type="text" placeholder="R$, horas…" value="${esc(m.unidade||"")}" data-f="unidade"></label>
-    </div><p class="hint">Para somar um depósito ou avanço, use o campo “Adicionar” no cartão: ele guarda o histórico abaixo.</p>`:""}
+    </div><p class="hint">Para somar um depósito ou avanço, use o campo “Adicionar” no cartão: ele guarda o histórico e alimenta o gráfico.</p>`:""}
+    ${tipo==="Hábito semanal"?`<div class="two">
+      <label class="field" for="f-vezes"><span>Vezes por semana</span><input id="f-vezes" type="number" min="1" max="7" value="${esc(m.vezes||3)}" data-f="vezes" data-num="1"></label>
+      <label class="field" for="f-alvo2"><span>Meta de semanas</span><input id="f-alvo2" type="number" min="1" max="104" value="${esc(m.alvo||50)}" data-f="alvo" data-num="1"></label>
+    </div><p class="hint">Uma semana conta como cumprida quando você marca pelo menos ${esc(m.vezes||3)} dias nela. Marque os dias direto no cartão.</p>`:""}
     <label class="field" for="f-notas"><span>Notas</span><textarea id="f-notas" data-f="notas">${esc(m.notas||"")}</textarea></label>
-    ${num?"":`<div class="sec"><h3>Etapas</h3>
+    ${tipo==="Numérica"?`<div class="sec"><h3>Evolução por mês</h3>${evolucaoNumerica(m)}</div>`:""}
+    ${tipo==="Hábito semanal"?`<div class="sec"><h3>Últimas 12 semanas</h3>${evolucaoHabito(m)}</div>`:""}
+    ${tipo==="Etapas"||tipo==="Marco único"?`<div class="sec"><h3>Etapas</h3>
       ${(m.etapas||[]).map((e,i)=>`<div class="ed-step">
         <input type="checkbox" id="fe-c-${e.id}" data-act="etapa" data-id="${m.id}" data-eid="${e.id}" ${e.feita?"checked":""} aria-label="Feita">
         <input type="text" id="fe-t-${e.id}" value="${esc(e.texto)}" data-etxt="${e.id}" aria-label="Etapa ${i+1}">
         <button class="icon" type="button" title="Subir" data-act="subir" data-eid="${e.id}" ${i===0?"disabled":""}>↑</button>
         <button class="icon" type="button" title="Remover etapa" data-act="rmEtapa" data-eid="${e.id}">×</button></div>`).join("")||`<p class="hint">Nenhuma etapa.</p>`}
       <form class="quick" data-form="novaEtapa"><input id="f-novaEtapa" type="text" placeholder="Nova etapa" aria-label="Nova etapa"><button class="btn small" type="submit">Adicionar etapa</button></form>
-    </div>`}
-    ${num?`<div class="sec"><h3>Histórico de avanços</h3>
+    </div>`:""}
+    ${tipo==="Numérica"?`<div class="sec"><h3>Histórico de avanços</h3>
       ${(m.registros||[]).length?`<ul class="hist">${(m.registros||[]).slice().reverse().map(r=>`<li><span>${dataBR(r.data)}</span><span class="v">${r.valor>0?"+":""}${esc(comUnidade(r.valor,m.unidade))}</span><button class="icon" type="button" title="Apagar este registro" data-act="rmReg" data-rid="${r.id}">×</button></li>`).join("")}</ul>`:`<p class="hint">Nada registrado ainda.</p>`}
     </div>`:""}
-    <div class="sec"><button class="btn danger" type="button" data-act="excluir" id="btnExcluir">Excluir meta</button></div>`;
+    ${compart}
+    <div class="sec">${dono?`<button class="btn danger" type="button" data-act="excluir" id="btnExcluir">Excluir meta</button>`:`<button class="btn danger" type="button" data-act="sairMeta" id="btnSairMeta">Sair desta meta</button>`}</div>`;
 }
-function patchGaveta(patch,redesenhar){const m=metas.find(x=>x.id===editId);if(!m)return;salvar(editId,comStatus(m,patch));if(redesenhar)desenharGaveta()}
+function editarEtapas(fn){gravar(editId,b=>({etapas:fn((b.etapas||[]).map(x=>({...x})))}));}
 
 /* ---------- eventos ---------- */
 document.addEventListener("click",e=>{
@@ -431,100 +697,229 @@ document.addEventListener("click",e=>{
   else if(a==="editar")abrir(t.dataset.id);
   else if(a==="fechar")fechar();
   else if(a==="marco")marcoConcluir(t.dataset.id);
-  else if(a==="rmEtapa"){const m=metas.find(x=>x.id===editId);patchGaveta({etapas:(m.etapas||[]).filter(x=>x.id!==t.dataset.eid).map(x=>({...x}))},true)}
-  else if(a==="subir"){const m=metas.find(x=>x.id===editId);const l=(m.etapas||[]).map(x=>({...x}));const i=l.findIndex(x=>x.id===t.dataset.eid);if(i>0){[l[i-1],l[i]]=[l[i],l[i-1]];patchGaveta({etapas:l},true)}}
-  else if(a==="rmReg"){const m=metas.find(x=>x.id===editId);const r=(m.registros||[]).find(x=>x.id===t.dataset.rid);if(!r)return;
-    patchGaveta({registros:m.registros.filter(x=>x.id!==r.id).map(x=>({...x})),atual:Math.round(((Number(m.atual)||0)-r.valor)*100)/100},true)}
+  else if(a==="dia")marcarDia(t.dataset.id,t.dataset.d,t.getAttribute("aria-pressed")!=="true");
+  else if(a==="rmEtapa"){const eid=t.dataset.eid;editarEtapas(l=>l.filter(x=>x.id!==eid))}
+  else if(a==="subir"){const eid=t.dataset.eid;editarEtapas(l=>{const i=l.findIndex(x=>x.id===eid);if(i>0)[l[i-1],l[i]]=[l[i],l[i-1]];return l})}
+  else if(a==="rmReg"){const rid=t.dataset.rid;gravar(editId,b=>{const r=(b.registros||[]).find(x=>x.id===rid);if(!r)return null;return{registros:b.registros.filter(x=>x.id!==rid),atual:arred((Number(b.atual)||0)-Number(r.valor||0))}})}
   else if(a==="excluir"){if(t.classList.contains("armed"))excluirMeta(editId);else{t.classList.add("armed");t.textContent="Toque de novo para excluir de vez";setTimeout(()=>{if(t.isConnected){t.classList.remove("armed");t.textContent="Excluir meta"}},4000)}}
+  else if(a==="sairMeta"){if(t.classList.contains("armed"))sairDaMeta(editId);else{t.classList.add("armed");t.textContent="Toque de novo para sair da meta";setTimeout(()=>{if(t.isConnected){t.classList.remove("armed");t.textContent="Sair desta meta"}},4000)}}
 });
 document.addEventListener("change",e=>{
   const t=e.target;
-  if(t.dataset.act==="etapa"){marcarEtapa(t.dataset.id,t.dataset.eid,t.checked);if(editId)desenharGaveta();return}
+  if(t.dataset.act==="etapa"){marcarEtapa(t.dataset.id,t.dataset.eid,t.checked);return}
+  if(t.dataset.share&&editId){alternarMembro(editId,t.dataset.share,t.checked);return}
   if(t.dataset.f&&editId){
-    let v=t.value;
-    if(t.dataset.num){v=parseFloat(String(v).replace(",","."));if(isNaN(v))v=0}
-    if(t.dataset.f==="nome"&&!v.trim())v="Sem nome";
-    patchGaveta({[t.dataset.f]:v},t.dataset.f==="tipo");
+    let v=t.value;const f=t.dataset.f;
+    if(t.dataset.num){v=lerNumero(v);if(isNaN(v))v=0}
+    if(f==="vezes")v=Math.min(7,Math.max(1,Math.round(v)||1));
+    if(f==="nome"&&!v.trim())v="Sem nome";
+    const patch={[f]:v};
+    if(f==="tipo"&&v==="Hábito semanal"){const m=metas.find(x=>x.id===editId);if(!(m.alvo>0)||m.tipo==="Numérica")patch.alvo=50;if(!m.vezes)patch.vezes=3}
+    salvar(editId,patch);
+    if(f==="tipo"||f==="vezes")setTimeout(desenharGaveta,0);
     return;
   }
-  if(t.dataset.etxt&&editId){const m=metas.find(x=>x.id===editId);patchGaveta({etapas:(m.etapas||[]).map(x=>x.id===t.dataset.etxt?{...x,texto:t.value}:{...x})},false)}
-  if(t.id==="ordem"||t.id==="ocultar")render();
+  if(t.dataset.etxt&&editId){const eid=t.dataset.etxt,txt=t.value;editarEtapas(l=>l.map(x=>x.id===eid?{...x,texto:txt}:x))}
+  if(t.id==="ordem"){try{localStorage.setItem("metas_ordem",t.value)}catch(err){}render()}
+  if(t.id==="ocultar")render();
 });
 document.addEventListener("submit",e=>{
   const f=e.target;if(!f.dataset.form)return;e.preventDefault();
   if(f.dataset.form==="add")adicionarValor(f.dataset.id);
-  if(f.dataset.form==="novaEtapa"){const inp=$("f-novaEtapa");const txt=inp.value.trim();if(!txt)return;const m=metas.find(x=>x.id===editId);
-    patchGaveta({etapas:[...(m.etapas||[]).map(x=>({...x})),{id:uid(),texto:txt,feita:false}]},true);setTimeout(()=>{const n=$("f-novaEtapa");if(n)n.focus()},30)}
+  if(f.dataset.form==="novaEtapa"){const inp=$("f-novaEtapa");const txt=inp.value.trim();if(!txt)return;const nid=uid();
+    editarEtapas(l=>[...l,{id:nid,texto:txt,feita:false}]);setTimeout(()=>{desenharGaveta();const n=$("f-novaEtapa");if(n)n.focus()},30)}
 });
 $("btnNova").addEventListener("click",criarMeta);
-$("scrim").addEventListener("click",fechar);
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&editId)fechar()});
+$("scrim").addEventListener("click",()=>{fechar();fecharPerfil()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){fechar();fecharPerfil()}});
 
-let toastT;function toast(msg){const el=$("toast");el.textContent=msg;el.style.display="block";clearTimeout(toastT);toastT=setTimeout(()=>el.style.display="none",2600)}
+let toastT;function toast(msg){const el=$("toast");el.textContent=msg;el.style.display="block";clearTimeout(toastT);toastT=setTimeout(()=>el.style.display="none",2800)}
 function aviso(msg){const n=$("notice");n.textContent=msg;n.hidden=!msg}
 
-/* ---------- conexão, login e backup ---------- */
-const SEED=[
- {nome:"Casar",area:"Pessoal e família",tipo:"Marco único",prioridade:"Alta",prazo:"2027-12-31",notas:"Chega a 100% quando todas as etapas estiverem feitas ou quando você marcar como concluída.",etapas:["Definir a data","Definir o orçamento","Escolher o local","Fazer a lista de convidados","Enviar os convites","Separar a documentação do casamento civil","O grande dia"]},
- {nome:"Juntar R$ 50.000",area:"Finanças",tipo:"Numérica",prioridade:"Alta",alvo:50000,unidade:"R$",notas:"Use o campo Adicionar a cada depósito."},
- {nome:"Passar no Revalida",area:"Carreira e estudos",tipo:"Etapas",prioridade:"Alta",notas:"2ª etapa (prática) das edições 2026 prevista pelo Inep para 14/03/2027; edital previsto para jan/2027.",etapas:["Confirmar em qual edição e etapa vou prestar","Inscrição na 1ª etapa (teórica)","Aprovação na 1ª etapa","Inscrição na 2ª etapa (habilidades clínicas)","Aprovação na 2ª etapa","Revalidar o diploma e registrar no CRM"]},
- {nome:"Estudar 600 horas para o Revalida",area:"Carreira e estudos",tipo:"Numérica",prioridade:"Alta",alvo:600,unidade:"horas",notas:"Sugestão."},
- {nome:"Investir todo mês (12 aportes)",area:"Finanças",tipo:"Numérica",prioridade:"Média",alvo:12,unidade:"aportes",notas:"Sugestão. Adicione 1 a cada mês com aporte feito."},
- {nome:"Treinar 3x por semana (150 treinos)",area:"Saúde e hábitos",tipo:"Numérica",prioridade:"Média",alvo:150,unidade:"treinos",notas:"Sugestão."},
- {nome:"Ler 12 livros",area:"Saúde e hábitos",tipo:"Numérica",prioridade:"Baixa",alvo:12,unidade:"livros",notas:"Sugestão."},
- {nome:"Fazer check-up médico anual",area:"Saúde e hábitos",tipo:"Marco único",prioridade:"Média",prazo:"2027-06-30",notas:"Sugestão."},
- {nome:"Planejar lua de mel",area:"Pessoal e família",tipo:"Etapas",prioridade:"Média",etapas:["Escolher o destino","Definir o orçamento da viagem","Escolher as datas (logo depois do casamento)","Conferir documentos (passaporte, vistos, vacinas)","Comprar as passagens","Reservar a hospedagem","Montar o roteiro e os passeios"]},
- {nome:"Fazer uma viagem",area:"Pessoal e família",tipo:"Marco único",prioridade:"Baixa",notas:"Sugestão."}
-];
-let sb=null;
-const norm=d=>({...d,prazo:d.prazo||"",atual:Number(d.atual)||0,alvo:Number(d.alvo)||0,etapas:(d.etapas||[]).map(e=>({...e})),registros:(d.registros||[]).map(r=>({...r}))});
-function mostrar(qual){$("login").hidden=qual!=="login";$("app").hidden=qual!=="app"}
+/* ---------- perfil ---------- */
+const temPasskey=()=>!!(window.PublicKeyCredential&&navigator.credentials);
+const meuNome=()=>(prefs.nome||"").trim();
+function mostrarUsuario(){
+  if(!usuario)return;
+  const n=meuNome(),ini=iniciaisDe(n,usuario.email);
+  $("btnPerfil").textContent=ini;$("pAvatar").textContent=ini;
+  $("hello").textContent=n?"Olá, "+n.split(/\s+/)[0]+"!":"Olá!";
+  $("pNome").textContent=n||"Sem nome";$("pEmail").textContent=usuario.email||"";
+  $("quem").textContent=usuario.email||"";
+}
+function desenharAreas(){
+  const lista=minhasAreas();
+  $("areasEd").innerHTML=lista.map((a,i)=>`<div class="area-ed"><button class="sw" type="button" style="--ac:var(--c${a.c})" data-acor="${i}" title="Trocar cor" aria-label="Trocar cor de ${esc(a.k)}"></button><input type="text" value="${esc(a.k)}" data-aname="${i}" aria-label="Nome da área ${i+1}" maxlength="30"><button class="icon" type="button" data-arm="${i}" title="Remover área">×</button></div>`).join("");
+}
+function abrirPerfil(){
+  fechar();$("pNomeIn").value=meuNome();$("pAno").value=ano();desenharAreas();
+  ["faceOk","faceErr","senhaOk","senhaErr"].forEach(i=>$(i).textContent="");
+  $("perfil").classList.add("open");$("scrim").classList.add("open");listarFace();
+}
+function fecharPerfil(){$("perfil").classList.remove("open");if(!editId)$("scrim").classList.remove("open")}
+$("btnPerfil").addEventListener("click",abrirPerfil);
+$("pFechar").addEventListener("click",fecharPerfil);
+$("fNome").addEventListener("submit",async e=>{
+  e.preventDefault();const nome=$("pNomeIn").value.trim().slice(0,40);if(!nome)return;
+  if(await salvarPrefs({nome})){mostrarUsuario();if(perfis[usuario.id])perfis[usuario.id].nome=nome;toast("Nome salvo.")}
+});
+$("fAno").addEventListener("submit",async e=>{
+  e.preventDefault();const a=parseInt($("pAno").value,10);if(!(a>=2000&&a<=2100)){toast("Digite um ano válido, ex.: 2028.");return}
+  if(await salvarPrefs({ano:a})){render();toast("Agora são as Metas "+a+".")}
+});
+$("areasEd").addEventListener("click",async e=>{
+  const cor=e.target.closest("[data-acor]"),rm=e.target.closest("[data-arm]");
+  const lista=minhasAreas().map(x=>({...x}));
+  if(cor){const i=+cor.dataset.acor;lista[i].c=lista[i].c%8+1;await salvarPrefs({areas:lista});desenharAreas();render()}
+  if(rm){const i=+rm.dataset.arm;const k=lista[i].k;const usadas=metas.filter(m=>m.area===k&&souDono(m)).length;
+    if(lista.length<=1){toast("Você precisa ter pelo menos uma área.");return}
+    if(usadas){toast(`Antes de remover, mude a área das ${usadas} meta${usadas>1?"s":""} de “${k}”.`);return}
+    lista.splice(i,1);await salvarPrefs({areas:lista});desenharAreas();render()}
+});
+$("areasEd").addEventListener("change",async e=>{
+  const inp=e.target.closest("[data-aname]");if(!inp)return;
+  const i=+inp.dataset.aname,lista=minhasAreas().map(x=>({...x})),velho=lista[i].k,novo=inp.value.trim().slice(0,30);
+  if(!novo||novo===velho){inp.value=velho;return}
+  if(lista.some((a,j)=>j!==i&&a.k===novo)){toast("Já existe uma área com esse nome.");inp.value=velho;return}
+  lista[i].k=novo;await salvarPrefs({areas:lista});
+  metas.filter(m=>m.area===velho&&souDono(m)).forEach(m=>salvar(m.id,{area:novo}));
+  if(filtroArea===velho)filtroArea=novo;desenharAreas();render();toast("Área renomeada.");
+});
+$("fArea").addEventListener("submit",async e=>{
+  e.preventDefault();const k=$("novaArea").value.trim().slice(0,30);if(!k)return;
+  const lista=minhasAreas().map(x=>({...x}));
+  if(lista.some(a=>a.k===k)){toast("Essa área já existe.");return}
+  const usadas=new Set(lista.map(a=>a.c));let c=1;while(usadas.has(c)&&c<8)c++;
+  lista.push({k,c});await salvarPrefs({areas:lista});$("novaArea").value="";desenharAreas();render();
+});
+$("fSenha").addEventListener("submit",async e=>{
+  e.preventDefault();$("senhaOk").textContent="";$("senhaErr").textContent="";
+  const a=$("pS1").value,b=$("pS2").value;
+  if(a.length<8){$("senhaErr").textContent="Use pelo menos 8 caracteres.";return}
+  if(a!==b){$("senhaErr").textContent="As duas senhas não são iguais.";return}
+  const {error}=await sb.auth.updateUser({password:a});
+  if(error){$("senhaErr").textContent=/different from the old/i.test(error.message)?"A nova senha precisa ser diferente da atual.":/weak|short|characters/i.test(error.message)?"Senha fraca: use letras e números, com pelo menos 8 caracteres.":"Não consegui trocar: "+error.message;return}
+  $("pS1").value="";$("pS2").value="";$("senhaOk").textContent="Senha trocada.";
+});
+
+/* ---------- Face ID / digital (passkeys) ---------- */
+function erroFace(err){
+  const m=(err&&err.message)||"";
+  if(/cancel|abort|NotAllowed|timed out/i.test(m))return "Cancelado. Tente de novo quando quiser.";
+  if(/not enabled|disabled|passkey.*not.*(allowed|enabled)/i.test(m))return "O login com Face ID ainda não foi ligado no Supabase (Authentication → Passkeys).";
+  if(/does not support/i.test(m))return "Este navegador não aceita Face ID / digital. Use o Safari ou o Chrome atualizados.";
+  if(/not found|no credential|unknown/i.test(m))return "Nenhuma chave encontrada neste aparelho. Entre com a senha e ative o Face ID no seu perfil.";
+  return "Não deu certo: "+m;
+}
+async function listarFace(){
+  const ul=$("faceLista");ul.innerHTML="";
+  if(!temPasskey()){$("faceHint").textContent="Este navegador não aceita Face ID / digital.";$("btnFaceAtivar").hidden=true;return}
+  try{
+    const {data,error}=await sb.auth.passkey.list();
+    if(error)throw error;
+    const lista=Array.isArray(data)?data:(data&&data.passkeys)||[];
+    ul.innerHTML=lista.map(p=>`<li><span>${esc(p.friendly_name||"Aparelho")}<br><small class="hint">desde ${p.created_at?new Date(p.created_at).toLocaleDateString("pt-BR"):"—"}</small></span><button class="icon" type="button" title="Remover" data-pk="${esc(p.id)}">×</button></li>`).join("");
+    $("faceHint").textContent=lista.length?"Aparelhos que podem entrar sem senha:":"Ative neste aparelho e, da próxima vez, entre sem digitar a senha.";
+  }catch(e){$("faceHint").textContent="Ative neste aparelho e, da próxima vez, entre sem digitar a senha."}
+}
+async function ativarFace(){
+  $("faceOk").textContent="";$("faceErr").textContent="";
+  const {error}=await sb.auth.registerPasskey();
+  if(error){$("faceErr").textContent=erroFace(error);return false}
+  try{localStorage.setItem("metas_face","1")}catch(e){}
+  $("faceOk").textContent="Pronto! Da próxima vez, toque em “Entrar com Face ID / digital”.";listarFace();return true;
+}
+$("btnFaceAtivar").addEventListener("click",ativarFace);
+$("faceLista").addEventListener("click",async e=>{
+  const b=e.target.closest("[data-pk]");if(!b)return;
+  const {error}=await sb.auth.passkey.delete({passkeyId:b.dataset.pk});
+  if(error){$("faceErr").textContent="Não consegui remover: "+error.message;return}
+  listarFace();
+});
+function convidarFace(){
+  let ja=false;try{ja=localStorage.getItem("metas_face")}catch(e){}
+  if(ja||!temPasskey()||erroCarga||!$("notice").hidden)return;
+  const n=$("notice");n.hidden=false;
+  n.innerHTML='Quer entrar com Face ID / digital da próxima vez, sem digitar a senha? <button class="btn small primary" type="button" id="cfSim">Ativar</button><button class="btn small" type="button" id="cfNao">Agora não</button>';
+  $("cfSim").onclick=async()=>{n.hidden=true;const ok=await ativarFace();if(!ok)abrirPerfil();else toast("Face ID ativado neste aparelho.")};
+  $("cfNao").onclick=()=>{n.hidden=true;try{localStorage.setItem("metas_face","adiado")}catch(e){}};
+}
+$("btnFace").addEventListener("click",async()=>{
+  $("fErr").textContent="";
+  const {error}=await sb.auth.signInWithPasskey();
+  if(error)$("fErr").textContent=erroFace(error);
+});
+
+/* ---------- carregar, exemplos e backup ---------- */
+function exemplos(){const A=ano();return[
+ {nome:"Montar uma reserva de emergência",area:"Finanças",tipo:"Numérica",prioridade:"Alta",alvo:10000,unidade:"R$",notas:"Exemplo. Ajuste o alvo para uns 6 meses dos seus gastos."},
+ {nome:"Ler 12 livros",area:"Saúde e hábitos",tipo:"Numérica",prioridade:"Média",alvo:12,unidade:"livros",notas:"Exemplo."},
+ {nome:"Treinar 3x por semana",area:"Saúde e hábitos",tipo:"Hábito semanal",prioridade:"Média",vezes:3,alvo:45,notas:"Exemplo. Marque no cartão os dias em que treinou."},
+ {nome:"Fazer check-up médico anual",area:"Saúde e hábitos",tipo:"Marco único",prioridade:"Média",prazo:A+"-06-30",notas:"Exemplo."},
+ {nome:"Aprender algo novo",area:"Carreira e estudos",tipo:"Etapas",prioridade:"Média",notas:"Exemplo. Troque pelo curso ou habilidade que quiser.",etapas:["Escolher o curso","Fazer a inscrição","Chegar na metade","Concluir"]},
+ {nome:"Fazer uma viagem",area:"Pessoal e família",tipo:"Etapas",prioridade:"Baixa",notas:"Exemplo.",etapas:["Escolher o destino","Definir o orçamento","Comprar as passagens","Reservar a hospedagem"]}
+].filter(x=>!(semCompartilhar&&x.tipo==="Hábito semanal"))}
 async function carregar(){
-  const {data,error}=await sb.from("metas").select("*").order("ordem");
-  if(error){aviso("Não consegui carregar suas metas: "+error.message+". Se o projeto no Supabase estiver pausado, abra o painel do Supabase e clique em Resume project.");loaded=true;render();return}
-  aviso("");metas=data.map(norm);loaded=true;render();
-  if(!metas.length)$("grid").innerHTML=`<div class="empty">Nenhuma meta ainda.<br><br><button class="btn primary" type="button" id="btnSeed">Carregar minhas 10 metas iniciais</button></div>`;
+  let r=await sb.from("metas").select("*, meta_membros(user_id)");
+  if(r.error&&/meta_membros|relationship|schema cache/i.test(r.error.message||"")){semCompartilhar=true;r=await sb.from("metas").select("*")}
+  else if(!r.error)semCompartilhar=false;
+  if(r.error){erroCarga=true;aviso("Não consegui carregar suas metas: "+r.error.message+". Se o projeto no Supabase estiver pausado, abra o painel do Supabase e clique em Resume project.");loaded=true;render();return}
+  if(!semCompartilhar){const p=await sb.from("perfis").select("id,email,nome");perfis={};if(!p.error)p.data.forEach(x=>perfis[x.id]=x)}
+  erroCarga=false;metas=r.data.map(norm);loaded=true;
+  if(semCompartilhar)aviso("Falta rodar o arquivo migracao-v3.sql no Supabase para liberar metas compartilhadas e hábitos semanais.");else if($("notice").textContent.startsWith("Falta rodar"))aviso("");
+  render();convidarFace();
 }
 async function semear(){
-  const linhas=SEED.map((x,i)=>limpar({...novaMetaBase({}),...x,ordem:i+1,etapas:(x.etapas||[]).map(t=>({id:uid(),texto:t,feita:false})),registros:[]}));
+  const linhas=exemplos().map((x,i)=>limpar({...novaMetaBase({area:x.area}),...x,ordem:i+1,etapas:(x.etapas||[]).map(t=>({id:uid(),texto:t,feita:false})),registros:[],dias:[]}));
   const {error}=await sb.from("metas").insert(linhas);
-  if(error){toast("Não consegui carregar: "+error.message);return}
+  if(error){toast("Não consegui criar os exemplos: "+error.message);return}
   carregar();
 }
 function exportar(){
-  const blob=new Blob([JSON.stringify({exportadoEm:new Date().toISOString(),metas:metas.map(({id,user_id,created_at,updated_at,...r})=>r)},null,2)],{type:"application/json"});
+  const minhas=metas.filter(souDono).map(({id,user_id,created_at,updated_at,meta_membros,...r})=>r);
+  const blob=new Blob([JSON.stringify({exportadoEm:new Date().toISOString(),preferencias:{ano:prefs.ano,areas:prefs.areas},metas:minhas},null,2)],{type:"application/json"});
   const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="metas-backup-"+hoje()+".json";document.body.appendChild(a);a.click();a.remove();
 }
 async function importar(file){
   let j;try{j=JSON.parse(await file.text())}catch(e){toast("Esse arquivo não é um backup válido.");return}
   const lista=Array.isArray(j)?j:j.metas;if(!Array.isArray(lista)){toast("Esse arquivo não é um backup válido.");return}
-  if(metas.length&&!window.confirm("Restaurar vai APAGAR as "+metas.length+" metas atuais e colocar as "+lista.length+" do backup. Continuar?"))return;
-  if(metas.length){const {error}=await sb.from("metas").delete().in("id",metas.map(m=>m.id));if(error){toast("Não consegui limpar: "+error.message);return}}
+  const minhas=metas.filter(souDono);
+  if(minhas.length&&!window.confirm("Restaurar vai APAGAR as suas "+minhas.length+" metas atuais e colocar as "+lista.length+" do backup. Metas que outras pessoas compartilham com você não são afetadas. Continuar?"))return;
+  if(minhas.length){const {error}=await sb.from("metas").delete().in("id",minhas.map(m=>m.id));if(error){toast("Não consegui limpar: "+error.message);return}}
   const {error}=await sb.from("metas").insert(lista.map(limpar));
   if(error){toast("Não consegui restaurar: "+error.message);return}
+  if(j.preferencias&&(j.preferencias.areas||j.preferencias.ano))await salvarPrefs(Object.fromEntries(Object.entries(j.preferencias).filter(([k,v])=>v)));
   toast("Backup restaurado.");carregar();
 }
-document.addEventListener("click",e=>{if(e.target.id==="btnSeed")semear()});
+document.addEventListener("click",e=>{if(e.target.id==="btnSeed")semear();if(e.target.id==="btnZero")criarMeta()});
 $("btnExport").addEventListener("click",exportar);
 $("fImport").addEventListener("change",e=>{const f=e.target.files[0];e.target.value="";if(f)importar(f)});
-$("btnSair").addEventListener("click",async()=>{await sb.auth.signOut();metas=[];loaded=false;mostrar("login")});
+async function sair(){fecharPerfil();fechar();await sb.auth.signOut();metas=[];perfis={};loaded=false;usuario=null;prefs={};mostrar("login")}
+$("btnSair").addEventListener("click",sair);
+$("pSair").addEventListener("click",sair);
 $("loginForm").addEventListener("submit",async e=>{
   e.preventDefault();$("lErr").textContent="";$("lBtn").disabled=true;
-  const {error}=await sb.auth.signInWithPassword({email:$("lEmail").value.trim(),password:$("lSenha").value});
+  const email=$("lEmail").value.trim();try{localStorage.setItem("metas_email",email)}catch(err){}
+  const {error}=await sb.auth.signInWithPassword({email,password:$("lSenha").value});
   $("lBtn").disabled=false;
   if(error)$("lErr").textContent=error.message==="Invalid login credentials"?"E-mail ou senha incorretos.":error.message;
 });
-document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&sb&&!$("app").hidden&&!editId)carregar()});
+function mostrar(qual){$("login").hidden=qual!=="login";$("app").hidden=qual!=="app"}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&sb&&!$("app").hidden&&!editId&&!$("perfil").classList.contains("open"))carregar()});
 
 (async()=>{
+  try{const o=localStorage.getItem("metas_ordem");if(o)$("ordem").value=o}catch(e){}
   const C=window.METAS_CONFIG||{};
   if(!window.supabase||!C.SUPABASE_URL||!C.SUPABASE_KEY||C.SUPABASE_URL.includes("COLE_")){
-    mostrar("login");$("loginForm").hidden=true;
-    document.querySelector("#login p").textContent="Falta configurar: preencha SUPABASE_URL e SUPABASE_KEY no arquivo config.js (veja o README).";return;
+    mostrar("login");$("loginForm").hidden=true;$("btnFace").hidden=true;
+    $("lIntro").textContent="Falta configurar: preencha SUPABASE_URL e SUPABASE_KEY no arquivo config.js (veja o README).";return;
   }
-  sb=window.supabase.createClient(C.SUPABASE_URL,C.SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
+  sb=window.supabase.createClient(C.SUPABASE_URL,C.SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,experimental:{passkey:true}}});
+  if(temPasskey()){$("btnFace").hidden=false;$("lOr").hidden=false}
+  try{const em=localStorage.getItem("metas_email");if(em)$("lEmail").value=em}catch(e){}
+  if(window.Sortable)sortable=Sortable.create($("grid"),{handle:".drag",draggable:".card",animation:150,forceFallback:true,fallbackTolerance:3,onEnd:salvarOrdemArrastada});
   sb.auth.onAuthStateChange((ev,session)=>{
-    if(session){if($("app").hidden){mostrar("app");$("quem").textContent=session.user.email;render();carregar()}}
+    if(session){usuario=session.user;prefs=usuario.user_metadata||{};mostrarUsuario();if($("app").hidden){mostrar("app");render();carregar()}}
     else mostrar("login");
   });
   const {data}=await sb.auth.getSession();

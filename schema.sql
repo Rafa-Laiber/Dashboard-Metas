@@ -56,3 +56,10 @@ language sql stable security definer set search_path = '' as $$
   select count(*)::integer from public.metas where false;
 $$;
 grant execute on function public.ping() to anon;
+
+-- Permissões de acesso pela API (projetos novos do Supabase não dão isso sozinhos).
+-- As regras acima (RLS) continuam garantindo que cada pessoa só veja as próprias metas.
+grant usage on schema public to anon, authenticated;
+grant select, insert, update, delete on table public.metas to authenticated;
+grant execute on function public.ping() to anon;
+notify pgrst, 'reload schema';
