@@ -10,8 +10,8 @@ jobs:
     steps:
       - name: Consultar o banco
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_URL: https://omckydyqqosfyuslxjtm.supabase.co/rest/v1/
+          SUPABASE_KEY: sb_publishable_0GzNpllN_L7-LSWrLvaSKQ_thIpBmam
         run: |
           curl -fsS -X POST "$SUPABASE_URL/rest/v1/rpc/ping" \
             -H "apikey: $SUPABASE_KEY" \
