@@ -212,6 +212,32 @@ h1{font-size:34px;font-weight:700;letter-spacing:-.01em}
 .area-ed input{flex:1;min-width:0;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:6px 8px}
 .sw{width:30px;height:30px;border-radius:8px;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);background:var(--ac);flex:none}
 
+/* ===== v6: ano ===== */
+.tit-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.anosel{position:relative;display:flex;align-items:center;gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:2px}
+.ano-seta{border:none;background:none;width:30px;height:30px;border-radius:50%;font-size:20px;line-height:1;color:var(--muted);display:flex;align-items:center;justify-content:center}
+.ano-seta:hover{background:var(--accent-soft);color:var(--accent)}
+.ano-btn{border:none;background:none;font-family:var(--display);font-weight:700;font-size:18px;padding:2px 8px;border-radius:8px;color:var(--accent);font-variant-numeric:tabular-nums;min-width:58px}
+.ano-btn:hover{background:var(--accent-soft)}
+.ano-menu{position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);z-index:9;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.18);padding:6px;min-width:250px;display:flex;flex-direction:column}
+.ano-menu[hidden]{display:none}
+.ano-menu button{border:none;background:none;text-align:left;padding:10px 12px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:44px}
+.ano-menu button:hover{background:var(--bg)}
+.ano-menu button[aria-checked="true"]{background:var(--accent-soft)}
+.ano-menu button[aria-checked="true"] b{color:var(--accent)}
+.ano-menu span{font-size:12px;color:var(--muted)}
+.ano-menu hr{border:none;border-top:1px solid var(--line);margin:4px 6px}
+.ano-menu [data-trazer]{flex-direction:column;align-items:flex-start;gap:2px}
+.seg{display:flex;gap:4px;background:var(--bg);border-radius:12px;padding:4px}
+.seg button{flex:1;border:none;background:none;border-radius:9px;min-height:40px;font-weight:600;color:var(--muted)}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.tz-todas{display:flex;gap:10px;align-items:center;font-weight:600;min-height:40px}
+.tz-lista label{border-left:3px solid var(--ac);padding-left:10px}
+.tz-foot{padding:12px 20px;border-top:1px solid var(--line);background:var(--surface)}
+.tz-foot .btn{width:100%;min-height:46px}
+.tz-foot .btn:disabled{opacity:.5;cursor:not-allowed}
+#tzBody{padding-bottom:20px}
+
 /* ===== v4: modo app no celular (o computador continua igual) ===== */
 #splash,#ptr,.miniring,.hoje-view,.tabbar,.grab,.sheet-foot,.cm-only{display:none}
 #dBody>div[data-tab]:not(.sec){display:flex;flex-direction:column;gap:14px}
@@ -239,6 +265,14 @@ h1{font-size:34px;font-weight:700;letter-spacing:-.01em}
   .top{position:sticky;top:0;z-index:6;background:var(--bg);margin:0 -14px;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;border-bottom:1px solid var(--line);flex-wrap:nowrap;align-items:center}
   .top .who{gap:10px;min-width:0}
   .top h1{font-size:22px;line-height:1.1}
+  .tit-row{gap:8px;flex-wrap:nowrap}
+  .anosel{padding:1px}
+  .ano-seta{width:34px;height:44px;border-radius:10px}
+  .ano-btn{font-size:16px;min-width:50px;min-height:44px;padding:0 4px}
+  .ano-menu{position:fixed;top:auto;left:12px;right:12px;transform:none;min-width:0;top:calc(64px + env(safe-area-inset-top))}
+  .tz-foot{position:absolute;left:0;right:0;bottom:0;z-index:5;padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+  .tz-foot .btn{min-height:50px;font-size:16px}
+  #tzBody{padding-bottom:calc(96px + env(safe-area-inset-bottom))}
   .hello{font-size:12px;margin:0}
   .avatar{width:40px;height:40px;font-size:14px}
   #btnNova,#sub{display:none}
@@ -363,6 +397,7 @@ h1{font-size:34px;font-weight:700;letter-spacing:-.01em}
   .login{margin:calc(10vh + env(safe-area-inset-top)) 16px 0;padding:24px}
   .login .btn{min-height:50px}
 }
+#trazer .body{flex:1}
 </style>
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js"></script>
@@ -391,7 +426,15 @@ h1{font-size:34px;font-weight:700;letter-spacing:-.01em}
       <button class="avatar" id="btnPerfil" type="button" aria-label="Abrir meu perfil" title="Meu perfil">··</button>
       <div>
         <p class="hello" id="hello">Olá!</p>
-        <h1 class="ttl">Metas</h1>
+        <div class="tit-row">
+          <h1 class="ttl">Metas</h1>
+          <div class="anosel">
+            <button type="button" class="ano-seta" data-anopasso="-1" aria-label="Ano anterior">‹</button>
+            <button type="button" class="ano-btn" id="anoBtn" aria-haspopup="menu" aria-expanded="false">2027</button>
+            <button type="button" class="ano-seta" data-anopasso="1" aria-label="Próximo ano">›</button>
+            <div class="ano-menu" id="anoMenu" role="menu" hidden></div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="topbtns"><button class="btn primary" id="btnNova" type="button">+ Nova meta</button>
@@ -468,11 +511,6 @@ h1{font-size:34px;font-weight:700;letter-spacing:-.01em}
       <div class="row-btn"><label class="field" for="pNomeIn"><span>Como quer ser chamado</span><input id="pNomeIn" type="text" maxlength="40" autocomplete="name" required></label><button class="btn" type="submit">Salvar</button></div>
       <p class="hint">Aparece na saudação, nas iniciais do topo e para quem compartilha metas com você.</p>
     </form>
-    <form class="sec" id="fAno">
-      <h3>Ano das metas</h3>
-      <div class="row-btn"><label class="field" for="pAno"><span>Ano</span><input id="pAno" type="number" min="2024" max="2100" step="1" inputmode="numeric" required></label><button class="btn" type="submit">Salvar</button></div>
-      <p class="hint">Muda o título, a contagem de dias e o prazo padrão das metas novas.</p>
-    </form>
     <div class="sec">
       <h3>Minhas áreas</h3>
       <p class="hint">Toque no quadrado colorido para trocar a cor. Renomear muda também as suas metas daquela área.</p>
@@ -495,6 +533,12 @@ h1{font-size:34px;font-weight:700;letter-spacing:-.01em}
     </form>
     <div class="sec"><button class="btn danger" type="button" id="pSair">Sair desta conta</button><p class="hint">Neste aparelho você continua conectado até tocar em Sair.</p></div>
   </div>
+</aside>
+<aside class="drawer" id="trazer" aria-label="Trazer metas de outro ano">
+  <div class="grab" aria-hidden="true"></div>
+  <header><h2 id="tzTitle">Trazer metas</h2><button class="btn small" type="button" id="tzFechar">Fechar</button></header>
+  <div class="body" id="tzBody"></div>
+  <div class="tz-foot"><button class="btn primary" type="button" id="tzOk" disabled>Escolha as metas</button></div>
 </aside>
 <div class="toast" id="toast" role="status"></div>
 
@@ -539,7 +583,19 @@ function diasAte(s){if(!s)return null;const h=new Date();h.setHours(0,0,0,0);ret
 const arred=n=>Math.round(n*100)/100;
 
 /* ---------- preferências (guardadas na conta) ---------- */
-const ano=()=>{const a=parseInt(prefs.ano,10);return a>=2000&&a<=2100?a:2027};
+const anoAtual=()=>new Date().getFullYear();
+const anoDe=m=>m.prazo?parseInt(m.prazo.slice(0,4),10):null;
+const todosAnos=()=>prefs.ano==="todos";
+// ano escolhido; sem escolha salva, usa o primeiro ano (do atual em diante) que tem metas
+function ano(){
+  const a=parseInt(prefs.ano,10);if(a>=2000&&a<=2100)return a;
+  const futuros=metas.map(anoDe).filter(y=>y&&y>=anoAtual()).sort((x,y)=>x-y);
+  return futuros[0]||anoAtual();
+}
+const noAno=(m,a)=>!m.prazo||anoDe(m)===a;
+const doAno=()=>todosAnos()?metas:metas.filter(m=>noAno(m,ano()));
+function anosComMetas(){return [...new Set(metas.map(anoDe).filter(Boolean))].sort((a,b)=>a-b)}
+function novoPrazo(p,alvo){if(!p)return alvo+"-12-31";let md=p.slice(4);if(md==="-02-29"&&!(alvo%4===0&&(alvo%100!==0||alvo%400===0)))md="-02-28";return alvo+md}
 function minhasAreas(){const a=Array.isArray(prefs.areas)&&prefs.areas.length?prefs.areas:DEF_AREAS;return a.filter(x=>x&&x.k)}
 function todasAreas(){const l=minhasAreas().slice();metas.forEach(m=>{if(m.area&&!l.some(a=>a.k===m.area))l.push({k:m.area,c:8,extra:true})});return l}
 const corArea=k=>"var(--c"+((todasAreas().find(a=>a.k===k)||{c:8}).c)+")";
@@ -665,7 +721,7 @@ function ordenar(l,modo){
   });
 }
 function visiveis(){
-  let l=metas.slice();
+  let l=doAno().slice();
   if(filtroArea)l=l.filter(m=>m.area===filtroArea);
   if($("ocultar").checked)l=l.filter(m=>m.status!=="Concluída");
   return ordenar(l,$("ordem").value);
@@ -722,20 +778,24 @@ function evolucaoHabito(m){
 
 /* ---------- desenho ---------- */
 function render(){
-  document.title="Metas "+ano();
-  document.querySelectorAll(".ttl").forEach(e=>e.textContent="Metas "+ano());
-  const tot=metas.length;
-  const geral=tot?metas.reduce((s,m)=>s+progresso(m),0)/tot:0;
+  document.title="Metas";
+  desenharAno();
+  const lista=doAno();
+  const tot=lista.length;
+  const geral=tot?lista.reduce((s,m)=>s+progresso(m),0)/tot:0;
   $("pctGeral").textContent=pctTxt(geral);
   $("ringArc").setAttribute("stroke-dashoffset",(326.7*(1-geral)).toFixed(1));
   $("miniArc").setAttribute("stroke-dashoffset",(100.5*(1-geral)).toFixed(1));$("miniPct").textContent=Math.round(geral*100)+"%";
   document.body.classList.toggle("ver-hoje",isMob()&&aba==="hoje");
   document.querySelectorAll("#tabbar [data-tab]").forEach(b=>b.classList.toggle("on",b.dataset.tab===aba));
   $("tTotal").textContent=tot;
-  $("tDone").textContent=metas.filter(m=>m.status==="Concluída").length;
-  $("tRun").textContent=metas.filter(m=>m.status==="Em andamento").length;
-  $("tDays").textContent=Math.max(0,diasAte(ano()+"-12-31"));
-  $("tDaysLbl").textContent="dias até 31/12/"+ano();
+  $("tDone").textContent=lista.filter(m=>m.status==="Concluída").length;
+  $("tRun").textContent=lista.filter(m=>m.status==="Em andamento").length;
+  const A=ano(),AA=anoAtual();
+  if(todosAnos()){$("tDays").textContent=anosComMetas().length;$("tDaysLbl").textContent="anos com metas"}
+  else if(A<AA){$("tDays").textContent="Fim";$("tDaysLbl").textContent="ano encerrado"}
+  else if(A>AA){$("tDays").textContent=Math.max(0,diasAte(A+"-01-01"));$("tDaysLbl").textContent="dias até começar "+A}
+  else{$("tDays").textContent=Math.max(0,diasAte(A+"-12-31"));$("tDaysLbl").textContent="dias até 31/12/"+A}
   if(loaded)$("sub").textContent=erroCarga?"":tot?"Toque numa etapa, num dia ou adicione um valor: o progresso se atualiza na hora.":"Comece criando sua primeira meta.";
 
   // lembretes de prazo
@@ -753,7 +813,7 @@ function render(){
   const areas=todasAreas();
   if(filtroArea&&!areas.some(a=>a.k===filtroArea))filtroArea=null;
   $("areas").innerHTML=[{k:null,c:0}].concat(areas).map(a=>{
-    const l=a.k?metas.filter(m=>m.area===a.k):metas;
+    const l=a.k?lista.filter(m=>m.area===a.k):lista;
     const p=l.length?l.reduce((s,m)=>s+progresso(m),0)/l.length:0;
     const cor=a.k?"var(--c"+a.c+")":"var(--accent)";
     return `<button type="button" class="area ${filtroArea===a.k?"on":""}" style="--ac:${cor}" data-act="area" data-area="${esc(a.k||"")}">
@@ -766,9 +826,11 @@ function render(){
   if(!loaded){$("grid").innerHTML=`<div class="empty">Carregando…</div>`;return}
   if(erroCarga){$("grid").innerHTML=`<div class="empty">Suas metas não puderam ser carregadas agora. Veja o aviso acima e tente recarregar a página.</div>`;return}
   if(!metas.length){$("grid").innerHTML=`<div class="empty">Você ainda não tem metas.<br><br><div class="topbtns" style="justify-content:center"><button class="btn primary" type="button" id="btnSeed">Começar com metas de exemplo</button><button class="btn" type="button" id="btnZero">Começar do zero</button></div><p class="hint" style="margin-top:12px">Os exemplos podem ser editados ou apagados depois.</p></div>`;return}
+  if(!lista.length){$("grid").innerHTML=anoVazio();return}
   const l=visiveis();
   if(!l.length){$("grid").innerHTML=`<div class="empty">Nenhuma meta neste filtro.</div>`;return}
-  $("grid").innerHTML=(isMob()&&$("ordem").value==="ordem"&&l.length>1&&!dicaOrdemVista()?`<p class="ordem-hint">Segure um cartão para mudar a ordem.</p>`:"")+l.map(cartao).join("");
+  const semDatadas=!todosAnos()&&!lista.some(m=>m.prazo);
+  $("grid").innerHTML=(semDatadas?anoVazio(true):"")+(isMob()&&$("ordem").value==="ordem"&&l.length>1&&!dicaOrdemVista()?`<p class="ordem-hint">Segure um cartão para mudar a ordem.</p>`:"")+l.map(cartao).join("");
   if(sortable)sortable.option("disabled",$("ordem").value!=="ordem");
   if(isMob()&&aba==="hoje")renderHoje();
 }
@@ -805,7 +867,7 @@ function cartaoMobile(m){
   </article>`;
 }
 function renderHoje(){
-  const ativas=metas.filter(m=>m.status!=="Concluída"&&m.status!=="Pausada");
+  const ativas=metas.filter(m=>m.status!=="Concluída"&&m.status!=="Pausada"&&(!m.prazo||anoDe(m)>=anoAtual()));
   const hab=ativas.filter(m=>m.tipo==="Hábito semanal");
   const eta=ativas.filter(m=>(m.tipo==="Etapas"||m.tipo==="Marco único")&&proximaEtapa(m));
   const num_=ativas.filter(m=>m.tipo==="Numérica");
@@ -861,6 +923,82 @@ function cartao(m){
     <div class="meta-line"><span>${prazo}</span></div>
     <div class="foot"><button class="btn small" type="button" data-act="editar" data-id="${m.id}">Editar</button></div>
   </article>`;
+}
+
+/* ---------- ano: setas, menu e "trazer metas" ---------- */
+function desenharAno(){
+  const t=todosAnos();
+  $("anoBtn").textContent=t?"Todos":ano();
+  $("anoBtn").setAttribute("aria-label",t?"Todos os anos. Toque para escolher outro ano":"Ano "+ano()+". Toque para escolher outro ano");
+}
+async function irParaAno(v){
+  fecharMenuAno();
+  prefs.ano=v;filtroArea=null;render();window.scrollTo({top:0,behavior:"smooth"});
+  salvarPrefs({ano:v});
+}
+function anosDoMenu(){const s=new Set([...anosComMetas(),anoAtual(),anoAtual()+1]);if(!todosAnos())s.add(ano());return [...s].sort((a,b)=>a-b)}
+function abrirMenuAno(){
+  const menu=$("anoMenu");
+  const itens=anosDoMenu().map(y=>{const l=metas.filter(m=>anoDe(m)===y);const p=l.length?l.reduce((s,m)=>s+progresso(m),0)/l.length:0;
+    return `<button type="button" role="menuitemradio" aria-checked="${!todosAnos()&&y===ano()}" data-anoir="${y}"><b>${y}</b><span>${l.length?l.length+" meta"+(l.length>1?"s":"")+" · "+pctTxt(p):"sem metas"}</span></button>`}).join("");
+  menu.innerHTML=itens+`<button type="button" role="menuitemradio" aria-checked="${todosAnos()}" data-anoir="todos"><b>Todos os anos</b><span>${metas.length} metas</span></button><hr><button type="button" data-trazer="1"><b>Trazer metas de outro ano</b><span>Copiar ou levar as não concluídas</span></button>`;
+  menu.hidden=false;$("anoBtn").setAttribute("aria-expanded","true");
+}
+function fecharMenuAno(){$("anoMenu").hidden=true;$("anoBtn").setAttribute("aria-expanded","false")}
+function anoVazio(faixa){
+  if(todosAnos())return `<div class="empty">Nenhuma meta.</div>`;
+  const A=ano(),ant=A-1;
+  const deAnt=metas.filter(m=>anoDe(m)===ant),pend=deAnt.filter(m=>m.status!=="Concluída");
+  if(faixa&&!deAnt.length)return "";
+  return `<div class="empty" ${faixa?'style="grid-column:1/-1"':""}>Nenhuma meta com prazo em ${A} ainda.<br><br><div class="topbtns" style="justify-content:center">
+    ${deAnt.length?`<button class="btn primary" type="button" data-trazer="copiar" data-de="${ant}">Copiar metas de ${ant}</button>`:""}
+    ${pend.length?`<button class="btn" type="button" data-trazer="levar" data-de="${ant}">Levar não concluídas de ${ant} (${pend.length})</button>`:""}
+    <button class="btn" type="button" id="btnZero">Criar meta</button></div>
+    ${!deAnt.length&&metas.length?`<p class="hint" style="margin-top:12px">Para trazer metas de outro ano, toque no ano lá em cima.</p>`:""}</div>`;
+}
+let trazer={modo:"copiar",de:null,sel:new Set()};
+function alvoTrazer(){return todosAnos()?anoAtual():ano()}
+function abrirTrazer(modo,de){
+  fecharMenuAno();fechar();fecharPerfil();
+  const alvo=alvoTrazer();
+  const outros=anosComMetas().filter(y=>y!==alvo);
+  trazer={modo:modo||"copiar",de:de?+de:(outros.includes(alvo-1)?alvo-1:(outros.filter(y=>y<alvo).pop()||outros[0]||alvo-1)),sel:new Set()};
+  desenharTrazer();$("trazer").classList.add("open");$("scrim").classList.add("open");
+}
+function fecharTrazer(){$("trazer").classList.remove("open");if(!editId&&!$("perfil").classList.contains("open"))$("scrim").classList.remove("open")}
+function listaTrazer(){const l=metas.filter(m=>anoDe(m)===trazer.de);return trazer.modo==="levar"?l.filter(m=>m.status!=="Concluída"):l}
+function desenharTrazer(){
+  const alvo=alvoTrazer(),outros=anosComMetas().filter(y=>y!==alvo);
+  if(!outros.includes(trazer.de)&&outros.length)trazer.de=outros.includes(alvo-1)?alvo-1:outros[outros.length-1];
+  const l=listaTrazer();trazer.sel=new Set([...trazer.sel].filter(id=>l.some(m=>m.id===id)));
+  $("tzTitle").textContent="Trazer metas para "+alvo;
+  const n=trazer.sel.size;
+  $("tzBody").innerHTML=`
+    <nav class="seg" aria-label="O que fazer"><button type="button" data-tzmodo="copiar" class="${trazer.modo==="copiar"?"on":""}">Copiar</button><button type="button" data-tzmodo="levar" class="${trazer.modo==="levar"?"on":""}">Levar não concluídas</button></nav>
+    <p class="hint">${trazer.modo==="copiar"?`Cria cópias novas em ${alvo}, <b>zeradas</b>: etapas desmarcadas, sem valores nem dias registrados. As metas de origem ficam como estão.`:`Move as metas escolhidas para ${alvo}, <b>mantendo o progresso</b>. Só o prazo muda para ${alvo}.`}</p>
+    ${outros.length?`<label class="field" for="tzDe"><span>Do ano</span><select id="tzDe">${outros.map(y=>`<option value="${y}" ${y===trazer.de?"selected":""}>${y}</option>`).join("")}</select></label>`:`<p class="hint">Ainda não há metas em outros anos.</p>`}
+    ${l.length?`<label class="tz-todas"><input type="checkbox" id="tzTodas" ${n===l.length?"checked":""}> Selecionar todas (${l.length})</label>
+    <ul class="share tz-lista">${l.map(m=>`<li><label for="tz-${m.id}" style="--ac:${corArea(m.area)}"><input type="checkbox" id="tz-${m.id}" data-tz="${m.id}" ${trazer.sel.has(m.id)?"checked":""}><span><b>${esc(m.nome)}</b><br><small class="hint">${esc(m.area)} · ${esc(m.status)} · ${pctTxt(progresso(m))}${m.prazo?" · prazo "+dataBR(m.prazo):""}</small></span></label></li>`).join("")}</ul>`
+      :outros.length?`<p class="hint">${trazer.modo==="levar"?"Todas as metas de "+trazer.de+" já foram concluídas.":"Nenhuma meta em "+trazer.de+"."}</p>`:""}`;
+  const b=$("tzOk");b.disabled=!n;
+  b.textContent=n?(trazer.modo==="copiar"?`Copiar ${n} meta${n>1?"s":""} para ${alvo}`:`Levar ${n} meta${n>1?"s":""} para ${alvo}`):"Escolha as metas";
+}
+async function confirmarTrazer(){
+  const alvo=alvoTrazer(),ids=[...trazer.sel];if(!ids.length)return;
+  const escolhidas=metas.filter(m=>ids.includes(m.id));
+  $("tzOk").disabled=true;
+  if(trazer.modo==="copiar"){
+    const linhas=escolhidas.map((m,i)=>limpar({...m,prazo:novoPrazo(m.prazo,alvo),status:"Não iniciada",atual:0,registros:[],dias:[],
+      etapas:(m.etapas||[]).map(e=>({id:uid(),texto:e.texto,feita:false})),ordem:Date.now()%1e9+i}));
+    const {data,error}=await sb.from("metas").insert(linhas).select(SEL());
+    if(error){toast("Não consegui copiar: "+error.message);$("tzOk").disabled=false;return}
+    data.forEach(d=>metas.push(norm(d)));
+    toast(`${escolhidas.length} meta${escolhidas.length>1?"s":""} copiada${escolhidas.length>1?"s":""} para ${alvo}.`);
+  }else{
+    escolhidas.forEach(m=>salvar(m.id,{prazo:novoPrazo(m.prazo,alvo)}));
+    toast(`${escolhidas.length} meta${escolhidas.length>1?"s":""} levada${escolhidas.length>1?"s":""} para ${alvo}.`);
+  }
+  fecharTrazer();if(todosAnos())prefs.ano=alvo;render();salvarPrefs({ano:alvo});
 }
 
 /* ---------- gaveta de edição ---------- */
@@ -959,6 +1097,23 @@ document.addEventListener("click",e=>{
   const card=e.target.closest(".card.cm");
   if(card&&!arrastando&&!e.target.closest("button,input,select,textarea,form,label,a"))abrir(card.dataset.id);
 });
+document.addEventListener("click",e=>{
+  const seta=e.target.closest("[data-anopasso]");
+  if(seta){const base=todosAnos()?anoAtual():ano();irParaAno(base+ +seta.dataset.anopasso);return}
+  if(e.target.closest("#anoBtn")){$("anoMenu").hidden?abrirMenuAno():fecharMenuAno();return}
+  const ir=e.target.closest("[data-anoir]");
+  if(ir){irParaAno(ir.dataset.anoir==="todos"?"todos":+ir.dataset.anoir);return}
+  const tz=e.target.closest("[data-trazer]");
+  if(tz){abrirTrazer(tz.dataset.trazer==="1"?"copiar":tz.dataset.trazer,tz.dataset.de);return}
+  const md=e.target.closest("[data-tzmodo]");
+  if(md){trazer.modo=md.dataset.tzmodo;trazer.sel=new Set();desenharTrazer();return}
+  if(!$("anoMenu").hidden&&!e.target.closest("#anoMenu"))fecharMenuAno();
+});
+document.addEventListener("change",e=>{
+  if(e.target.id==="tzDe"){trazer.de=+e.target.value;trazer.sel=new Set();desenharTrazer();return}
+  if(e.target.id==="tzTodas"){const l=listaTrazer();trazer.sel=e.target.checked?new Set(l.map(m=>m.id)):new Set();desenharTrazer();return}
+  if(e.target.dataset&&e.target.dataset.tz){e.target.checked?trazer.sel.add(e.target.dataset.tz):trazer.sel.delete(e.target.dataset.tz);desenharTrazer();return}
+});
 document.addEventListener("change",e=>{
   const t=e.target;
   if(t.dataset.act==="etapa"){marcarEtapa(t.dataset.id,t.dataset.eid,t.checked);return}
@@ -985,8 +1140,10 @@ document.addEventListener("submit",e=>{
     editarEtapas(l=>[...l,{id:nid,texto:txt,feita:false}]);setTimeout(()=>{desenharGaveta();const n=$("f-novaEtapa");if(n)n.focus()},30)}
 });
 $("btnNova").addEventListener("click",criarMeta);
-$("scrim").addEventListener("click",()=>{fechar();fecharPerfil()});
-document.addEventListener("keydown",e=>{if(e.key==="Escape"){fechar();fecharPerfil()}});
+$("scrim").addEventListener("click",()=>{fechar();fecharPerfil();fecharTrazer()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){fechar();fecharPerfil();fecharTrazer();fecharMenuAno()}});
+$("tzFechar").addEventListener("click",fecharTrazer);
+$("tzOk").addEventListener("click",confirmarTrazer);
 
 let toastT;function toast(msg){const el=$("toast");el.textContent=msg;el.style.display="block";clearTimeout(toastT);toastT=setTimeout(()=>el.style.display="none",2800)}
 function aviso(msg){const n=$("notice");n.textContent=msg;n.hidden=!msg}
@@ -1007,7 +1164,7 @@ function desenharAreas(){
   $("areasEd").innerHTML=lista.map((a,i)=>`<div class="area-ed"><button class="sw" type="button" style="--ac:var(--c${a.c})" data-acor="${i}" title="Trocar cor" aria-label="Trocar cor de ${esc(a.k)}"></button><input type="text" value="${esc(a.k)}" data-aname="${i}" aria-label="Nome da área ${i+1}" maxlength="30"><button class="icon" type="button" data-arm="${i}" title="Remover área">×</button></div>`).join("");
 }
 function abrirPerfil(){
-  fechar();$("pNomeIn").value=meuNome();$("pAno").value=ano();desenharAreas();
+  fechar();$("pNomeIn").value=meuNome();desenharAreas();
   ["faceOk","faceErr","senhaOk","senhaErr"].forEach(i=>$(i).textContent="");
   $("perfil").classList.add("open");$("scrim").classList.add("open");listarFace();
 }
@@ -1018,10 +1175,7 @@ $("fNome").addEventListener("submit",async e=>{
   e.preventDefault();const nome=$("pNomeIn").value.trim().slice(0,40);if(!nome)return;
   if(await salvarPrefs({nome})){mostrarUsuario();if(perfis[usuario.id])perfis[usuario.id].nome=nome;toast("Nome salvo.")}
 });
-$("fAno").addEventListener("submit",async e=>{
-  e.preventDefault();const a=parseInt($("pAno").value,10);if(!(a>=2000&&a<=2100)){toast("Digite um ano válido, ex.: 2028.");return}
-  if(await salvarPrefs({ano:a})){render();toast("Agora são as Metas "+a+".")}
-});
+
 $("areasEd").addEventListener("click",async e=>{
   const cor=e.target.closest("[data-acor]"),rm=e.target.closest("[data-arm]");
   const lista=minhasAreas().map(x=>({...x}));
@@ -1133,7 +1287,8 @@ async function carregar(){
   render();convidarFace();
 }
 async function semear(){
-  const linhas=exemplos().map((x,i)=>limpar({...novaMetaBase({area:x.area}),...x,ordem:i+1,etapas:(x.etapas||[]).map(t=>({id:uid(),texto:t,feita:false})),registros:[],dias:[]}));
+  const A=ano();
+  const linhas=exemplos().map((x,i)=>limpar({...novaMetaBase({area:x.area}),...x,prazo:x.prazo?novoPrazo(x.prazo,A):A+"-12-31",ordem:i+1,etapas:(x.etapas||[]).map(t=>({id:uid(),texto:t,feita:false})),registros:[],dias:[]}));
   const {error}=await sb.from("metas").insert(linhas);
   if(error){toast("Não consegui criar os exemplos: "+error.message);return}
   carregar();
@@ -1200,6 +1355,7 @@ function arrastarParaFechar(painel,fecharFn){
 }
 arrastarParaFechar($("drawer"),()=>fechar());
 arrastarParaFechar($("perfil"),()=>fecharPerfil());
+arrastarParaFechar($("trazer"),()=>fecharTrazer());
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&sb&&!$("app").hidden&&!editId&&!$("perfil").classList.contains("open"))carregar()});
 
 (async()=>{
