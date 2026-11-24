@@ -12,7 +12,8 @@
 <meta name="apple-mobile-web-app-title" content="Metas">
 <meta name="robots" content="noindex">
 <link rel="apple-touch-icon" href="icon-180.png">
-<link rel="icon" type="image/png" href="icon-180.png">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -212,6 +213,11 @@ h1{font-size:34px;font-weight:700;letter-spacing:-.01em}
 .area-ed input{flex:1;min-width:0;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:6px 8px}
 .sw{width:30px;height:30px;border-radius:8px;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);background:var(--ac);flex:none}
 
+/* ===== v7: marca ===== */
+.login-marca{display:flex;align-items:center;gap:14px}
+.login-marca img{border-radius:13px;flex:none}
+.login-marca h1{font-size:32px}
+
 /* ===== v6: ano ===== */
 .tit-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .anosel{position:relative;display:flex;align-items:center;gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:2px}
@@ -407,7 +413,7 @@ h1{font-size:34px;font-weight:700;letter-spacing:-.01em}
 <div id="splash" aria-hidden="true"><img src="icon-180.png" alt="" width="84" height="84"><b>Metas</b></div>
 <div id="ptr" aria-hidden="true"><span>↓</span> <em>Puxe para atualizar</em></div>
 <section class="login" id="login" hidden>
-  <h1 class="ttl">Metas</h1>
+  <div class="login-marca"><img src="icon-180.png" alt="" width="56" height="56"><h1 class="ttl">Metas</h1></div>
   <p id="lIntro">Entre com seu e-mail e senha.</p>
   <button class="btn face" type="button" id="btnFace" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 9.5v1M15 9.5v1M12 9.5v3.5h-1M9.5 16c1.5 1 3.5 1 5 0"/></svg>Entrar com Face ID / digital</button>
   <p class="err" id="fErr"></p>
