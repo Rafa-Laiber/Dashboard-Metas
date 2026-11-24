@@ -1,0 +1,52 @@
+# Roda os testes automáticos a cada envio de arquivos. Se algo quebrar, o GitHub avisa por e-mail.
+name: Testes
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  site:
+    name: Site (computador e celular)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: testes
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test
+        env:
+          CI: "1"
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: relatorio-dos-testes
+          path: testes/playwright-report
+          retention-days: 7
+
+  banco:
+    name: Banco (regras de acesso e histórico)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: teste
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: teste
+    steps:
+      - uses: actions/checkout@v4
+      - name: Estrutura do banco (2x, para garantir que pode repetir) e testes
+        run: psql -v ON_ERROR_STOP=1 -q -f testes/banco/supabase-falso.sql -f schema.sql -f schema.sql -f testes/banco/testes.sql

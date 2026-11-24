@@ -1,0 +1,11 @@
+{
+  "name": "metas-testes",
+  "private": true,
+  "description": "Testes automáticos do site Metas (rodam no GitHub a cada envio).",
+  "scripts": { "test": "playwright test" },
+  "devDependencies": {
+    "@playwright/test": "1.49.1",
+    "@supabase/supabase-js": "2.119.0",
+    "sortablejs": "1.15.2"
+  }
+}
