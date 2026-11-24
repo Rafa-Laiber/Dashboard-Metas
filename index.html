@@ -1074,6 +1074,7 @@ async function listarFace(){
     if(error)throw error;
     const lista=Array.isArray(data)?data:(data&&data.passkeys)||[];
     ul.innerHTML=lista.map(p=>`<li><span>${esc(p.friendly_name||"Aparelho")}<br><small class="hint">desde ${p.created_at?new Date(p.created_at).toLocaleDateString("pt-BR"):"—"}</small></span><button class="icon" type="button" title="Remover" data-pk="${esc(p.id)}">×</button></li>`).join("");
+    if(lista.length)lembrarFace();
     $("faceHint").textContent=lista.length?"Aparelhos que podem entrar sem senha:":"Ative neste aparelho e, da próxima vez, entre sem digitar a senha.";
   }catch(e){$("faceHint").textContent="Ative neste aparelho e, da próxima vez, entre sem digitar a senha."}
 }
@@ -1091,9 +1092,16 @@ $("faceLista").addEventListener("click",async e=>{
   if(error){$("faceErr").textContent="Não consegui remover: "+error.message;return}
   listarFace();
 });
-function convidarFace(){
+let conviteChecado=false;
+function lembrarFace(){try{localStorage.setItem("metas_face","1")}catch(e){}}
+async function convidarFace(){
   let ja=false;try{ja=localStorage.getItem("metas_face")}catch(e){}
-  if(ja||!temPasskey()||erroCarga||!$("notice").hidden)return;
+  if(ja||conviteChecado||!temPasskey()||erroCarga||!$("notice").hidden)return;
+  conviteChecado=true;
+  // pergunta à conta se já existe alguma chave cadastrada antes de oferecer
+  try{const {data,error}=await sb.auth.passkey.list();const l=Array.isArray(data)?data:(data&&data.passkeys)||[];
+    if(error||l.length){if(l.length)lembrarFace();return}}catch(e){return}
+  if(!$("notice").hidden||$("app").hidden)return;
   const n=$("notice");n.hidden=false;
   n.innerHTML='Quer entrar com Face ID / digital da próxima vez, sem digitar a senha? <button class="btn small primary" type="button" id="cfSim">Ativar</button><button class="btn small" type="button" id="cfNao">Agora não</button>';
   $("cfSim").onclick=async()=>{n.hidden=true;const ok=await ativarFace();if(!ok)abrirPerfil();else toast("Face ID ativado neste aparelho.")};
@@ -1102,7 +1110,7 @@ function convidarFace(){
 $("btnFace").addEventListener("click",async()=>{
   $("fErr").textContent="";
   const {error}=await sb.auth.signInWithPasskey();
-  if(error)$("fErr").textContent=erroFace(error);
+  if(error)$("fErr").textContent=erroFace(error);else lembrarFace();
 });
 
 /* ---------- carregar, exemplos e backup ---------- */
@@ -1149,7 +1157,7 @@ async function importar(file){
 document.addEventListener("click",e=>{if(e.target.id==="btnSeed")semear();if(e.target.id==="btnZero")criarMeta()});
 $("btnExport").addEventListener("click",exportar);
 $("fImport").addEventListener("change",e=>{const f=e.target.files[0];e.target.value="";if(f)importar(f)});
-async function sair(){fecharPerfil();fechar();await sb.auth.signOut();metas=[];perfis={};loaded=false;usuario=null;prefs={};mostrar("login")}
+async function sair(){conviteChecado=false;fecharPerfil();fechar();await sb.auth.signOut();metas=[];perfis={};loaded=false;usuario=null;prefs={};mostrar("login")}
 $("btnSair").addEventListener("click",sair);
 $("pSair").addEventListener("click",sair);
 $("loginForm").addEventListener("submit",async e=>{
