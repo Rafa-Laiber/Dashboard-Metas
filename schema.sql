@@ -1,6 +1,6 @@
 -- Metas: estrutura completa do banco (Supabase).
 -- Para um projeto NOVO, rode este arquivo uma vez (SQL Editor > New query > Run).
--- Ele já inclui todas as atualizações (v3, v9 e v10) e pode ser rodado de novo sem problema.
+-- Ele já inclui todas as atualizações (v3, v9, v10 e v12) e pode ser rodado de novo sem problema.
 -- Quem já tem o site funcionando NÃO precisa rodar nada daqui.
 
 -- ================================================================ schema.sql
@@ -352,4 +352,39 @@ grant execute on function public.avanco_somar(uuid, text, double precision, date
                           public.avanco_apagar(uuid, text) to authenticated;
 revoke execute on function public.avanco_somar(uuid, text, double precision, date),
                            public.avanco_apagar(uuid, text) from anon;
+notify pgrst, 'reload schema';
+
+-- ================================================================ migracao-v12.sql
+-- Metas · atualização v12: metas compartilhadas ao vivo
+-- Rode uma vez no Supabase (SQL Editor > New query > cole tudo > Run). Pode rodar de novo sem problema.
+
+-- 1) Guarda quem fez a última alteração em cada meta (para avisar "Ana atualizou ...")
+alter table public.metas add column if not exists alterado_por uuid;
+
+create or replace function public.metas_marcar_autor() returns trigger
+language plpgsql set search_path = '' as $$
+begin
+  new.alterado_por := (select auth.uid());
+  return new;
+end $$;
+drop trigger if exists metas_autor on public.metas;
+create trigger metas_autor before insert or update on public.metas
+  for each row execute function public.metas_marcar_autor();
+
+-- 2) Liga o "ao vivo" (Realtime) para as metas, o histórico e o compartilhamento.
+--    Cada pessoa só recebe mudanças das metas que ela pode ver (mesmas regras de acesso de sempre).
+do $$
+declare t text;
+begin
+  if not exists (select 1 from pg_publication where pubname = 'supabase_realtime') then
+    create publication supabase_realtime;
+  end if;
+  foreach t in array array['metas', 'avancos', 'meta_membros'] loop
+    if not exists (select 1 from pg_publication_tables
+                   where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = t) then
+      execute format('alter publication supabase_realtime add table public.%I', t);
+    end if;
+  end loop;
+end $$;
+
 notify pgrst, 'reload schema';

@@ -21,6 +21,8 @@ Um site grátis que funciona no celular (como um app) e no computador.
 | `js/eventos.js` | Cliques e toques |
 | `js/perfil.js` | Perfil, aparência e Face ID |
 | `js/inicio.js` | Login, carregar dados, exemplos e backup |
+| `lib/` | Bibliotecas usadas pelo site (Supabase e arrastar cartões), guardadas aqui mesmo |
+| `sw.js` | Deixa o site abrir sem internet e sempre buscar a versão mais nova |
 | `config.js` | Endereço e chave do Supabase. **Nunca substitua este arquivo.** |
 | `schema.sql` | Estrutura completa do banco, só para um projeto novo |
 | `migracao-*.sql` | Atualizações já aplicadas; ficam como histórico |
@@ -63,5 +65,5 @@ O plano grátis do Supabase não faz backup automático. Uma vez por mês, em **
 |---|---|
 | Aviso "alterações não salvas" | É falta de internet. O site tenta de novo sozinho; as alterações ficam guardadas no aparelho. |
 | "Não consegui carregar suas metas" | O projeto pode estar pausado: no Supabase, clique em **Resume project**. |
-| Atualização não aparece | O GitHub Pages leva até 10 minutos. Recarregue com Cmd+Shift+R. |
-| Página em branco | Avise: pode ser a conferência de segurança das bibliotecas. |
+| Atualização não aparece | Feche e abra o site de novo (com internet). |
+| Aviso "Sem internet" | O site mostra o que estava salvo no aparelho; o que você registrar é enviado quando a conexão voltar. |
