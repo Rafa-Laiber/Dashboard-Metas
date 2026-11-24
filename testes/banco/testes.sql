@@ -64,4 +64,14 @@ do $$ begin
   exception when insufficient_privilege then null; end;
 end $$;
 reset role;
+-- v12: quem alterou fica registrado; tabelas ligadas ao "ao vivo"
+insert into metas (id, user_id, nome, tipo) values ('aaaaaaaa-0000-0000-0000-000000000009', :'rafa', 'Ao vivo', 'Etapas');
+insert into meta_membros values ('aaaaaaaa-0000-0000-0000-000000000009', :'ana');
+set role authenticated; set request.jwt.claim.sub = :'ana';
+update metas set notas = 'mexi' where id = 'aaaaaaaa-0000-0000-0000-000000000009';
+reset role;
+do $$ begin
+  assert (select alterado_por from metas where id = 'aaaaaaaa-0000-0000-0000-000000000009') = '22222222-2222-2222-2222-222222222222', 'deveria guardar quem alterou';
+  assert (select count(*) from pg_publication_tables where pubname = 'supabase_realtime' and tablename in ('metas', 'avancos', 'meta_membros')) = 3, 'ao vivo deveria estar ligado nas 3 tabelas';
+end $$;
 \echo 'Banco: todos os testes passaram.'

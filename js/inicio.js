@@ -8,19 +8,37 @@ function exemplos(){const A=ano();return[
  {nome:"Aprender algo novo",area:"Carreira e estudos",tipo:"Etapas",prioridade:"Média",notas:"Exemplo. Troque pelo curso ou habilidade que quiser.",etapas:["Escolher o curso","Fazer a inscrição","Chegar na metade","Concluir"]},
  {nome:"Fazer uma viagem",area:"Pessoal e família",tipo:"Etapas",prioridade:"Baixa",notas:"Exemplo.",etapas:["Escolher o destino","Definir o orçamento","Comprar as passagens","Reservar a hospedagem"]}
 ]}
-async function carregar(){
+function montar(linhas,pessoas,avancos){
+  perfis={};(pessoas||[]).forEach(x=>perfis[x.id]=x);
+  const porMeta={};(avancos||[]).forEach(({meta_id,...x})=>(porMeta[meta_id]=porMeta[meta_id]||[]).push(x));
+  if(!pend.length)pend=lerPend();
+  metas=linhas.map(d=>reaplicar(comRegs(d,porMeta[d.id]||[])));loaded=true;
+}
+const hora=t=>new Date(t).toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
+let carregando=null;
+function carregar(){return carregando||(carregando=carregarAgora().finally(()=>carregando=null))}
+async function carregarAgora(){
   // metas, pessoas e histórico de avanços chegam juntos
   const [r,p,av]=await Promise.all([sb.from("metas").select(SEL()),sb.from("perfis").select("id,email,nome,cor"),lerAvancos()]);
-  const falhou=r.error||av.error;
-  if(falhou){erroCarga=true;aviso("Não consegui carregar suas metas: "+falhou.message+". Se o projeto no Supabase estiver pausado, abra o painel do Supabase e clique em Resume project.");loaded=true;render();return}
-  perfis={};if(!p.error)p.data.forEach(x=>perfis[x.id]=x);
-  const porMeta={};av.data.forEach(({meta_id,...x})=>(porMeta[meta_id]=porMeta[meta_id]||[]).push(x));
-  erroCarga=false;if(!pend.length)pend=lerPend();
-  metas=r.data.map(d=>reaplicar(comRegs(d,porMeta[d.id]||[])));loaded=true;
+  const falhou=r.error?{...r.error,status:r.status}:av.error;
+  if(falhou){
+    const copia=lerCopia(),e=erroDe({error:falhou,status:falhou.status});
+    if(passageiro(e)){
+      semConexao=true;
+      if(copia&&!metas.length){montar(copia.metas,copia.perfis,copia.avancos);erroCarga=false}
+      aviso(copia?"Sem internet: mostrando o que estava salvo neste aparelho ("+hora(copia.quando)+"). O que você registrar é enviado quando a conexão voltar."
+                 :"Sem internet, e ainda não há metas salvas neste aparelho. Conecte-se uma vez para elas ficarem disponíveis offline.");
+      if(!metas.length)erroCarga=!copia;
+    }else{erroCarga=true;aviso("Não consegui carregar suas metas: "+falhou.message+". Se o projeto no Supabase estiver pausado, abra o painel do Supabase e clique em Resume project.")}
+    loaded=true;render();mostrarPend();return;
+  }
+  semConexao=false;erroCarga=false;
+  montar(r.data,p.error?[]:p.data,av.data);
+  guardarCopia({metas:r.data,perfis:p.error?[]:p.data,avancos:av.data});
   const ids=new Set(metas.map(m=>m.id));if(pend.some(x=>!ids.has(x.id))){pend=pend.filter(x=>ids.has(x.id));guardarPend()}
   enviarPend();
-  if($("notice").textContent.startsWith("Não consegui carregar"))aviso("");
-  render();convidarFace();
+  if(/^(Não consegui carregar|Sem internet)/.test($("notice").textContent))aviso("");
+  render();convidarFace();ligarAoVivo();
 }
 async function semear(){
   const A=ano();
@@ -49,7 +67,7 @@ async function importar(file){
 document.addEventListener("click",e=>{if(e.target.id==="btnSeed")semear();if(e.target.id==="btnZero")criarMeta()});
 $("btnExport").addEventListener("click",exportar);
 $("fImport").addEventListener("change",e=>{const f=e.target.files[0];e.target.value="";if(f)importar(f)});
-async function sair(){if(pend.length&&!window.confirm("Ainda há "+pend.length+" alteração(ões) não salva(s). Elas ficam guardadas neste aparelho e são enviadas quando você entrar de novo. Sair mesmo assim?"))return;pend=[];clearTimeout(timerPend);conviteChecado=false;fecharPerfil();fechar();await sb.auth.signOut();metas=[];perfis={};loaded=false;usuario=null;prefs={};mostrar("login")}
+async function sair(){if(pend.length&&!window.confirm("Ainda há "+pend.length+" alteração(ões) não salva(s). Elas ficam guardadas neste aparelho e são enviadas quando você entrar de novo. Sair mesmo assim?"))return;pend=[];clearTimeout(timerPend);desligarAoVivo();apagarCopia();semConexao=false;conviteChecado=false;fecharPerfil();fechar();await sb.auth.signOut();metas=[];perfis={};loaded=false;usuario=null;prefs={};mostrar("login")}
 $("btnSair").addEventListener("click",sair);
 $("pSair").addEventListener("click",sair);
 $("loginForm").addEventListener("submit",async e=>{
@@ -117,4 +135,6 @@ document.addEventListener("visibilitychange",()=>{if(document.visibilityState===
   });
   const {data}=await sb.auth.getSession();
   if(!data.session)mostrar("login");
+  // guarda o site no aparelho para abrir sem internet
+  if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 })();

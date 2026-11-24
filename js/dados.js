@@ -109,7 +109,62 @@ function mostrarPend(){
   el.querySelector("button").hidden=enviando;
   el.classList.toggle("off",off);
 }
-window.addEventListener("online",()=>{tentativa=0;enviarPend()});
+window.addEventListener("online",()=>{tentativa=0;if(semConexao)carregar();else enviarPend()});
+
+/* ---------- ao vivo: mudanças de outras pessoas aparecem na hora ---------- */
+let canal=null,aoVivoCaiu=false,timerRecarga=null;
+function ligarAoVivo(){
+  if(canal||!sb||typeof sb.channel!=="function")return;
+  const ouvir={event:"*",schema:"public"};
+  canal=sb.channel("metas-ao-vivo")
+    .on("postgres_changes",{...ouvir,table:"metas"},aoVivo)
+    .on("postgres_changes",{...ouvir,table:"avancos"},aoVivo)
+    .on("postgres_changes",{...ouvir,table:"meta_membros"},aoVivo)
+    .subscribe(st=>{
+      // se a conexão ao vivo caiu e voltou, busca tudo de novo para não perder nada do intervalo
+      if(st==="SUBSCRIBED"){if(aoVivoCaiu){aoVivoCaiu=false;recarregarLogo()}}
+      else if(st==="CHANNEL_ERROR"||st==="TIMED_OUT"||st==="CLOSED")aoVivoCaiu=true;
+    });
+}
+function desligarAoVivo(){if(canal){try{sb.removeChannel(canal)}catch(e){}canal=null}}
+function recarregarLogo(){clearTimeout(timerRecarga);timerRecarga=setTimeout(()=>{if(usuario)carregar()},700)}
+function aoVivo(p){
+  if(!usuario||!loaded)return;
+  const t=p.table,ev=p.eventType,n=p.new||{},o=p.old||{};
+  if(t==="meta_membros"){recarregarLogo();return}
+  if(t==="metas"){
+    if(ev==="DELETE"){
+      if(!metas.some(m=>m.id===o.id))return;
+      metas=metas.filter(m=>m.id!==o.id);pend=pend.filter(x=>x.id!==o.id);guardarPend();
+      if(editId===o.id)fechar();render();return;
+    }
+    const i=metas.findIndex(m=>m.id===n.id);
+    if(i<0){recarregarLogo();return} // meta nova (de outro aparelho ou compartilhada agora)
+    const m=metas[i];
+    if(n.updated_at&&m.updated_at===n.updated_at)return; // eco do que eu mesmo salvei
+    metas[i]=reaplicar(comRegs({...n,meta_membros:m.meta_membros},m.registros));
+    redesenhar(n.id);
+    if(n.alterado_por&&n.alterado_por!==usuario.id){
+      toast(primeiroNome(n.alterado_por)+" atualizou \u201c"+metas[i].nome+"\u201d");piscar(n.id);
+    }
+    return;
+  }
+  if(t==="avancos"){
+    const id=n.meta_id||o.meta_id,m=metas.find(x=>x.id===id);if(!m)return;
+    if(ev==="INSERT"&&!m.registros.some(r=>r.id===n.id)){
+      m.registros=[...m.registros,{id:n.id,valor:Number(n.valor)||0,data:n.data}].sort((a,b)=>String(a.data).localeCompare(String(b.data)));
+    }else if(ev==="DELETE"){m.registros=m.registros.filter(r=>r.id!==o.id)}else return;
+    redesenhar(id);
+  }
+}
+function piscar(id){requestAnimationFrame(()=>{const el=document.querySelector('.card[data-id="'+CSS.escape(id)+'"]');if(el){el.classList.remove("vivo");void el.offsetWidth;el.classList.add("vivo")}})}
+
+/* ---------- cópia dos dados no aparelho (para abrir sem internet) ---------- */
+let semConexao=false;
+const chaveCopia=()=>"metas_copia_"+(usuario?usuario.id:"");
+function guardarCopia(d){try{localStorage.setItem(chaveCopia(),JSON.stringify({...d,quando:Date.now()}))}catch(e){}}
+function lerCopia(){try{return JSON.parse(localStorage.getItem(chaveCopia())||"null")}catch(e){return null}}
+function apagarCopia(){try{localStorage.removeItem(chaveCopia())}catch(e){}}
 window.addEventListener("offline",mostrarPend);
 window.addEventListener("beforeunload",e=>{if(pend.length){try{localStorage.setItem(chavePend(),JSON.stringify(pend))}catch(err){e.preventDefault();e.returnValue=""}}});
 // histórico de avanços (tabela própria, lida em páginas de 1000)

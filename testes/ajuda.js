@@ -1,8 +1,4 @@
 // Prepara o navegador de teste: banco simulado (mock.js), dados iniciais e usuário logado.
-const path = require("path");
-const MOCK = path.join(__dirname, "mock.js");
-const SORTABLE = require.resolve("sortablejs/Sortable.min.js");
-const SUPABASE = path.join(path.dirname(require.resolve("@supabase/supabase-js/package.json")), "dist/umd/supabase.js");
 
 function dadosPadrao() {
   const regs = [10, 10, 10].map((v, j) => ({ meta_id: "x0", id: "r" + j, valor: v, data: "2026-11-0" + (j + 1), criado_em: "0000000" + j }));
@@ -37,22 +33,12 @@ async function abrir(page, opcoes = {}) {
   }, [db, logado]);
   await page.route(/fonts\.(googleapis|gstatic)\.com/, r => r.abort());
   await page.route(/supabase\.co/, r => r.abort());
-  const cors = { "access-control-allow-origin": "*" };
-  await page.route(/cdn\.jsdelivr\.net\/npm\/sortablejs/, r => r.fulfill({ path: SORTABLE, contentType: "text/javascript", headers: cors }));
-  if (opcoes.real) {
-    await page.route(/cdn\.jsdelivr\.net\/npm\/@supabase/, r => r.fulfill({ path: SUPABASE, contentType: "text/javascript", headers: cors }));
-  } else {
-    await page.route(/cdn\.jsdelivr\.net\/npm\/@supabase/, r => r.fulfill({ path: MOCK, contentType: "text/javascript", headers: cors }));
-    // o banco simulado não é o arquivo verdadeiro, então tira só a conferência dele
-    await page.route(/\/(index\.html)?(\?.*)?$/, async r => {
-      const resp = await r.fetch();
-      const html = (await resp.text()).replace(/(supabase\.js") integrity="[^"]+"/, "$1");
-      await r.fulfill({ response: resp, body: html });
-    });
-  }
-  await page.route("**/config.js", r => r.fulfill({ body: 'window.METAS_CONFIG={SUPABASE_URL:"https://teste.supabase.co",SUPABASE_KEY:"k"}', contentType: "text/javascript" }));
+  // o servidor de testes entrega o config falso e (sem "real") o banco simulado
+  const cookies = [{ name: "teste", value: "1", url: "http://127.0.0.1:4173" }];
+  if (!opcoes.real) cookies.push({ name: "mock", value: "1", url: "http://127.0.0.1:4173" });
+  await page.context().addCookies(cookies);
   await page.goto("/index.html");
-  if (logado && !opcoes.real) await page.locator(".card").first().waitFor();
+  if (logado && !opcoes.real && opcoes.esperar !== false) await page.locator(".card").first().waitFor();
   return { erros, avisosConsole };
 }
 const banco = page => page.evaluate(() => JSON.parse(localStorage.getItem("__db")));

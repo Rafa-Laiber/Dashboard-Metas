@@ -5,11 +5,16 @@ const { abrir, dadosPadrao, banco, esperarFilaVazia } = require("./ajuda");
 const valorTela = (page, id = "x0") => page.locator(`.card[data-id=${id}] .big`).innerText();
 async function somar(page, v, id = "x0") { await page.fill(`#q-${id}`, String(v)); await page.press(`#q-${id}`, "Enter"); }
 
-test("bibliotecas verdadeiras passam na conferência de segurança", async ({ page }) => {
+test("bibliotecas do site são as oficiais e carregam sem bloqueios", async ({ page }) => {
+  const fs = require("fs"), path = require("path");
+  const oficial = f => fs.readFileSync(f);
+  const supa = path.join(path.dirname(require.resolve("@supabase/supabase-js/package.json")), "dist/umd/supabase.js");
+  expect(oficial(path.join(__dirname, "../lib/supabase.js")).equals(oficial(supa))).toBe(true);
+  expect(oficial(path.join(__dirname, "../lib/Sortable.min.js")).equals(oficial(require.resolve("sortablejs/Sortable.min.js")))).toBe(true);
   const r = await abrir(page, { real: true, logado: false });
-  await expect.poll(() => page.evaluate(() => typeof window.supabase?.createClient + "/" + typeof window.Sortable), { timeout: 3000 }).toBe("function/function").catch(e => { console.log(r.avisosConsole, r.erros); throw e; });
+  await expect.poll(() => page.evaluate(() => typeof window.supabase?.createClient + "/" + typeof window.Sortable)).toBe("function/function");
   await expect(page.locator("#login")).toBeVisible();
-  expect(r.avisosConsole.filter(t => /Security Policy|integrity/i.test(t))).toEqual([]);
+  expect(r.avisosConsole.filter(t => /Security Policy/i.test(t))).toEqual([]);
   expect(r.erros).toEqual([]);
 });
 

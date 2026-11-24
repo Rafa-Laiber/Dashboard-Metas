@@ -224,7 +224,6 @@ h1{font-size:34px;font-weight:700;letter-spacing:-.01em}
 .cores{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;justify-items:center}
 .cor-op{width:48px;height:48px;border-radius:50%;border:none;background:var(--cx);cursor:pointer}
 .cor-op[aria-checked="true"]{box-shadow:0 0 0 3px var(--surface),0 0 0 6px var(--cx)}
-.so-pc{}
 #sBody{gap:18px}
 .s-nav{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .s-nav b{font-family:var(--display);font-size:18px}
@@ -457,3 +456,7 @@ h1{font-size:34px;font-weight:700;letter-spacing:-.01em}
   .login .btn{min-height:50px}
 }
 #trazer .body{flex:1}
+/* ao vivo: cartão pisca quando outra pessoa muda a meta */
+@keyframes vivo{0%{box-shadow:0 0 0 3px var(--accent)}100%{box-shadow:0 0 0 0 transparent}}
+.card.vivo{animation:vivo 1.8s ease-out}
+@media (prefers-reduced-motion:reduce){.card.vivo{animation:none}}
